@@ -4,10 +4,8 @@ data = file.read()
 data = data.split('\n')
 
 count  = 0
-i = 1
-while i < len(data):
+for i in range(1, len(data)):
     if int(data[i - 1]) < int(data[i]):
         count += 1
-    i += 1
 
 print(count)
