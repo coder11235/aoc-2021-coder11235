@@ -1,4 +1,4 @@
-# HEAVILY UNOPTIMISED SOLUTION
+# HEAVILY UNOPTIMISED SOLUTION.
 
 
 file = open('data.txt', 'r')
