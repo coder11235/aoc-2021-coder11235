@@ -32,10 +32,7 @@ def filteraction(listtp: list, max: bool, index: int = 0):
                 nl.append(listtp[i])
     return filteraction(nl, max, index+1)
 
-ogerating = filteraction(data.copy(), True)[0]
-cogerating = filteraction(data.copy(), False)[0]
-
 print(
-    int(ogerating, 2)*
-    int(cogerating, 2)
+    int(filteraction(data, True)[0], 2)*
+    int(filteraction(data, False)[0], 2)
 )
