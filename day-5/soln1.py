@@ -3,22 +3,6 @@ data = file.read().split('\n')
 
 points = []
 
-def diagonalcount(lx, ly, rx, ry):
-    temppoints = []
-    print('borders: ', (lx, ly), (rx, ry))
-    if (rx < lx and ry < ly) or (ly < ry and lx > rx):
-        temp = lx, ly
-        lx, ly = rx, ry
-        rx, ry = temp
-            
-    if lx < rx and ly < ry:
-        for i in range(0, rx - lx + 1):
-            temppoints.append([lx + i, ly + i])
-    else:
-        for i in range(0, rx - lx + 1):
-            temppoints.append([lx + i, ly - i])
-    return temppoints
-
 for i in data:
     left, right = i.split('->')
     left = left.strip()
@@ -48,10 +32,9 @@ for i in data:
                 temppoints.append([i, ry])
         else:
             temppoints.append([rx, ry])
-    elif abs(rx - lx) == abs(ry - ly):
-        temppoints = diagonalcount(lx, ly, rx, ry)
-
     points += temppoints
+
+print(points)
 
 firstencountered = []
 count = 0
