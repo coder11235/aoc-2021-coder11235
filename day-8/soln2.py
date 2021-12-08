@@ -1,3 +1,6 @@
+# NOT COMPLETED YET.NOT SURE WHAT TO DO
+
+
 data = open('smallersmpl.txt', 'r').read().split('\n')
 
 def parse(entry: str):
