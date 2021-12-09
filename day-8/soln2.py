@@ -1,7 +1,7 @@
 # NOT COMPLETED YET.NOT SURE WHAT TO DO
 
 
-data = open('smallersmpl.txt', 'r').read().split('\n')
+data = open('data.txt', 'r').read().split('\n')
 
 def parse(entry: str):
     input, output = entry.split(' | ')
@@ -16,42 +16,34 @@ def checkifitisinside(small, big):
 def sub(a, b):
     return [i for i in a if not i in b or b.remove(i)]
 
-def withsmallfindbig(remaining: list, small, big):
+def withsmallfindbig(remaining: list, small):
     for i in range(len(remaining)):
         if checkifitisinside(small, remaining[i]):
-            big = remaining[i]
-            remaining.pop(i)
-            break
+            return remaining.pop(i)
 
 def withbigfindsmall(remaining: list,big):
     for i in range(0, len(remaining)):
         if checkifitisinside(remaining[i], big):
-            small = remaining[i]
-            remaining.pop(i)
-            return small
+            return remaining.pop(i)
 
 # accepts the input entry and returns an array with all digits sorted
 def makevalues(input):
     orderarray: list = []
-    # def
-    a1 = []
-    # def
-    a7 = []
-    # def
-    a4 = []
-    # def
-    a8 = []
-    a9 = []
-    a0 = []
-    a3 = []
-    a6 = []
-    a5 = []
-    a2 = []
+    a1: set = {}
+    a7: set = {}
+    a4: set = {}
+    a8: set = {}
+    a9: set = {}
+    a0: set = {}
+    a3: set = {}
+    a6: set = {}
+    a5: set = {}
+    a2: set = {}
 
     remaining: list[list[str]] = []
     # predefined sizes : 1,4,7,8,
     for i in input:
-        spl = list(i)
+        spl = set(i)
         if len(i) == 2:
             a1 = spl
         elif len(i) == 3:
@@ -63,18 +55,34 @@ def makevalues(input):
         else:
             remaining.append(spl)
 
-    withsmallfindbig(remaining, a4, a9)
-    # a0 = withbigfindsmall(remaining, a8)
-    withsmallfindbig(remaining, a1, a3)
-    withsmallfindbig(remaining, sub(a8, a7), a6)
-    # a5 = withbigfindsmall(remaining, a6)
-    a2 = remaining
+    a9 = withsmallfindbig(remaining, a4)
+    # 
+    a6 = withsmallfindbig(remaining, sub(a8, a7.copy()))
+    a5 = withbigfindsmall(remaining, a6)
+    a3 = withbigfindsmall(remaining, a9)
+    a0 = withsmallfindbig(remaining, a1)
+    a2 = remaining[0]
     orderarray = [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9]
     return orderarray
 
 data = list(map(parse, data))
 
+sum = 0
+
 for entry in data:
-    input = entry[0]
+    input, output = entry
     order = makevalues(input)
-    print(order)
+
+    calcedout = []
+    for i in output:
+        for j in range(len(order)):
+            if set(i) == order[j]:
+                calcedout.append(j)
+                break
+    num = ""
+    for i in calcedout:
+        num += str(i)
+    num = int(num)
+    sum += num
+
+print(sum)
