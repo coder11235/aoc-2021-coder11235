@@ -33,12 +33,6 @@ def makevalues(input):
     a7: set = {}
     a4: set = {}
     a8: set = {}
-    a9: set = {}
-    a0: set = {}
-    a3: set = {}
-    a6: set = {}
-    a5: set = {}
-    a2: set = {}
 
     remaining: list[list[str]] = []
     # predefined sizes : 1,4,7,8,
