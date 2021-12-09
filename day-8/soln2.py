@@ -1,6 +1,3 @@
-# NOT COMPLETED YET.NOT SURE WHAT TO DO
-
-
 data = open('data.txt', 'r').read().split('\n')
 
 def parse(entry: str):
@@ -50,7 +47,6 @@ def makevalues(input):
             remaining.append(spl)
 
     a9 = withsmallfindbig(remaining, a4)
-    # 
     a6 = withsmallfindbig(remaining, sub(a8, a7.copy()))
     a5 = withbigfindsmall(remaining, a6)
     a3 = withbigfindsmall(remaining, a9)
@@ -76,7 +72,6 @@ for entry in data:
     num = ""
     for i in calcedout:
         num += str(i)
-    num = int(num)
-    sum += num
+    sum += int(num)
 
 print(sum)
