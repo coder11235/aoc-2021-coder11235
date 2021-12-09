@@ -1,7 +1,7 @@
 import math
 from termcolor import colored
 
-heightmap = open('sample.txt', 'r').read().split('\n')
+heightmap = open('data.txt', 'r').read().split('\n')
 
 def parse(line):
     nl = []
@@ -34,19 +34,19 @@ def issmallest(i, j):
             return False
     return True
 
-def dfs(i, j, risk):
-    risk.append((i, j))
+def dfs(i, j, vis: list):
+    vis[i][j] = True
     cur = heightmap[i][j]
     adj = getadj(i, j)
     adj = list(
         filter(
-            lambda i : heightmap[i[0]][i[1]] - cur == 1 and heightmap[i[0]][i[1]] != 9
+            lambda k : heightmap[k[0]][k[1]] != 9 and not vis[k[0]][k[1]]
         , adj)
     )
     if len(adj) == 0:
         return
     for i, j in adj:
-        dfs(i, j, risk)
+        dfs(i, j, vis)
 
 risk = []
 
@@ -57,31 +57,17 @@ for i in range(len(heightmap)):
 
 sizes: list = []
 
-inthere = []
-
 for i, j in risk:
-    curriskarray = []
-    dfs(i, j, curriskarray)
-    inthere.append(curriskarray)
-    curriskarray = set(curriskarray)
-    sizes.append(len(curriskarray))
+    vis = [[False for _ in range(len(heightmap[0]))] for _ in range(len(heightmap))]
+    dfs(i, j, vis)
+    size = 0
+    for a in vis:
+        size += sum(a)
+    sizes.append(size)
 
 sizes.sort()
 
-for p in range(len(sizes)):
-    for i in range(len(heightmap)):
-        for j in range((len(heightmap[0]))):
-            if (i, j) in risk:
-                print(colored(heightmap[i][j], 'red'), end='')
-            elif (i, j) in inthere[p]:
-                print(colored(heightmap[i][j], 'blue'), end='')
-            else:
-                print(heightmap[i][j], end='')
-        print()
-    print()
-
 print(sizes)
 sizes = sizes[-3:]
-print(sizes)
 
 print(math.prod(sizes))
