@@ -1,3 +1,6 @@
+from collections import deque
+from typing import cast
+
 data = open('data.txt', 'r').read().split('\n')
 
 sc = []
@@ -12,30 +15,26 @@ def getscore(ch):
     else:
         return 4
 
-def calcinc(arr):
+def calcinc(stack: deque):
     lc = 0
-    for i in arr:
-        lc *= 5
-        lc += getscore(i)
+    while(len(stack) != 0):
+        lc = lc * 5 + getscore(stack.pop())
     sc.append(lc)
 
 for line in data:
-    latest = []
+    latest = deque()
     arr = list(line)
     iscor = False
     for ch in arr:
         if ch == "(" or ch == "{" or ch == "[" or ch == "<":
             latest.append(ch)
         else:
-            lt = latest[-1]
-            if lt == "(" and ch == ")" or lt == "{" and ch == "}" or lt == "<" and ch == ">" or lt == "[" and ch == "]":
-                latest.pop(-1)
-            else:
+            lt = latest.pop()
+            if not (lt == "(" and ch == ")" or lt == "{" and ch == "}" or lt == "<" and ch == ">" or lt == "[" and ch == "]"):
                 iscor = True
                 break
     if iscor:
         continue
-    latest.reverse()
     calcinc(latest)
 
 sc.sort()

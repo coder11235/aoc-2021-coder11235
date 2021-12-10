@@ -1,3 +1,5 @@
+from collections import deque
+
 data = open('data.txt', 'r').read().split('\n')
 
 score = 0
@@ -13,16 +15,14 @@ def getscore(ch):
         return 25137
 
 for line in data:
-    latest = []
+    latest = deque()
     arr = list(line)
     for ch in arr:
         if ch == "(" or ch == "{" or ch == "[" or ch == "<":
             latest.append(ch)
         else:
-            lt = latest[-1]
-            if lt == "(" and ch == ")" or lt == "{" and ch == "}" or lt == "<" and ch == ">" or lt == "[" and ch == "]":
-                latest.pop(-1)
-            else:
+            lt = latest.pop()
+            if not (lt == "(" and ch == ")" or lt == "{" and ch == "}" or lt == "<" and ch == ">" or lt == "[" and ch == "]"):
                 score += getscore(ch)
                 break
 
