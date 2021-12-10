@@ -15,8 +15,8 @@ def getscore(ch):
 def calcinc(arr):
     lc = 0
     for i in arr:
-        lc = lc * 5
-        lc = lc + getscore(i)
+        lc *= 5
+        lc += getscore(i)
     sc.append(lc)
 
 for line in data:
