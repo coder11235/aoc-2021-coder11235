@@ -42,17 +42,14 @@ def foldhor(sheet, ax):
     right = [row[ax+1:] for row in sheet]
     return [row[::-1] for row in [[(left[i][j] or right[i][j]) if (j < len(right[0])) else left[i][j] for j in range(len(left[0]))] for i in range(len(left))]]
 
+
 for i in coords:
     sheet[i[1]][i[0]] = True
 
-ins = instruc[0]
-if ins[0] == 'y':
-    sheet = foldvert(sheet, int(ins[1]))
-else:
-    sheet = foldhor(sheet, int(ins[1]))
+for ins in instruc:
+    if ins[0] == 'y':
+        sheet = foldvert(sheet, int(ins[1]))
+    else:
+        sheet = foldhor(sheet, int(ins[1]))
 
-print(ins)
-
-count = sum([sum(row) for row in sheet])
-
-print(count)
+printsheet(sheet)
