@@ -30,9 +30,6 @@ class Cave:
 
         totr = self.connections.copy()
         totr = list(filter(lambda cv: not cv.visited, totr))
-        if len(totr) == 0:
-            cavemap.search(path.pop()).visited = False
-            return False
 
         for cave in totr:
             cave.dfs(path, cavemap)
