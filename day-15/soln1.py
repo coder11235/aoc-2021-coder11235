@@ -5,7 +5,7 @@ class Heap:
     def picklowest(self):
         lowest_value = float("inf")
         lowest_set = None
-        for index, val in enumerate(self.values):
+        for val in self.values:
             if val[1] < lowest_value:
                 lowest_value = val[1]
                 lowest_set = val
