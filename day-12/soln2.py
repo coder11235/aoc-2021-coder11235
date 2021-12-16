@@ -2,35 +2,12 @@ data = open('sample.txt', 'r').read()
 
 from termcolor import colored
 
-class Caves:
-    caves: list['Cave'] = []
-    pathsofar: list = []
-    doubledone: str = None
-
-    def search(self, name: str):
-        for i in self.caves:
-            if i.name == name:
-                return i
-
-    def append(self, cave):
-        self.caves.append(cave)
-
-def rmv(path: list, cavemap: Caves):
-    cavename = path.pop()
-    print(colored(cavename, 'green'))
-    cave = cavemap.search(cavename)
-    if cave.name == cavemap.doubledone:
-        cavemap.doubledone = None
-    else:
-        cave.visited = False
-
 class Cave:
     isbig: bool
     connections: list['Cave']
     name: str
     visited: bool
-    hasbeendoubled: bool = False
-
+    hasbeentwiced: bool = False
     def __init__(self, name: str):
         self.name = name
         self.connections = []
@@ -44,34 +21,53 @@ class Cave:
         return self.name
         
     def dfs(self, path: list, cavemap: 'Caves'):
-        print(colored(self, 'red'))
-        if self.name != 'start':
-            if cavemap.doubledone is None:
-                if not self.isbig:
-                    cavemap.doubledone = self.name
-                else:
-                    self.visited = False
+        mustredocuztwiced = False
+        if self.name == 'start' and len(path) != 0:
+            return
+        if not self.isbig:
+            if (not cavemap.smallcavedoubledalready) and (not self.hasbeentwiced):
+                cavemap.smallcavedoubledalready = True
+                self.hasbeentwiced = True
+                mustredocuztwiced = True
             else:
                 self.visited = True
-        else:
-            self.visited = True
         path.append(self.name)
-        print(path)
 
         if self.name == 'end':
             cavemap.pathsofar.append(path.copy())
-            rmv(path, cavemap)
+            print(colored(path, 'red'))
+            cavemap.search(path.pop()).visited = False
             return True
+        else:
+            print(path)
 
         totr = self.connections.copy()
-        totr = list(filter(lambda cv: (not cv.visited or cv.isbig) and cv.name != 'start', totr))
-        if len(totr) == 0:
-            rmv(path, cavemap)
-            return False
+        totr = list(filter(lambda cv: not cv.visited, totr))
 
         for cave in totr:
             cave.dfs(path, cavemap)
-        rmv(path, cavemap)
+
+        if mustredocuztwiced:
+            print(colored(f"second timind{self}", 'blue'))
+            print(colored(path, 'green'))
+            cavemap.smallcavedoubledalready = False
+            self.hasbeentwiced = True
+            for cave in totr:
+                cave.dfs(path, cavemap)
+
+        cavemap.search(path.pop()).visited = False
+
+class Caves:
+    caves: list[Cave] = []
+    pathsofar: list = []
+    smallcavedoubledalready: bool = False
+    def search(self, name: str):
+        for i in self.caves:
+            if i.name == name:
+                return i
+
+    def append(self, cave):
+        self.caves.append(cave)
 
 cavemap = Caves()
 
