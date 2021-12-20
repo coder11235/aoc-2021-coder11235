@@ -17,7 +17,7 @@ binmaps = {
     'F' : '1111',
 }
 
-data = 'EE00D40C823060'
+data = 'A0016C880162017C3686B18A3D4780'
 
 
 versions = []
@@ -39,6 +39,11 @@ def parse_packet(nd):
         trd = True
     nd = nd[::-1]
 
+    # #append till 5s
+    # extra = len(nd)%5
+    # if extra == 0: extra = 5
+    # nd = "0"*(5-extra) + nd
+
     #fetch version and type
     version = int(nd[:3], 2)
     versions.append(version)
@@ -56,12 +61,13 @@ def parse_packet(nd):
             return nr + recsplit(rest)
         value = int(recsplit(nd), 2)
 
-        # # debug
-        # print(version, type_id, value)
+        # debug
+        print(f"literal packet ve:{version}, ti:{type_id}, v:{value}")
     else:
         # perform operator operations
         len_type_id = nd[:1]
         nd = nd[1:]
+        print(f"op ve: {version}, lentype: {len_type_id}")
         if len_type_id == '1':
             l = int(nd[:11], 2)
             nd = nd[11:]
@@ -79,7 +85,16 @@ def parse_packet(nd):
                 parse_packet(i)
         else:
             l = int(nd[:15], 2)
+            print(l, nd)
             nd = nd[15:]
+            print(l, nd)
+            first_packet = nd[:11]
+            nd = nd[11:]
+            if l > 11:
+                parse_packet(first_packet)
+                parse_packet(nd)
+            else:
+                parse_packet(first_packet)
 
 
 parse_packet(nd)
