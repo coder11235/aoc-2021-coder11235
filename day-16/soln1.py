@@ -17,7 +17,7 @@ binmaps = {
     'F' : '1111',
 }
 
-data = 'A0016C880162017C3686B18A3D4780'
+data = '620080001611562C8802118E34'
 
 
 versions = []
@@ -81,20 +81,36 @@ def parse_packet(nd):
                 rest = arr[lpp:]
                 recursesplit(rest, sub, lpp)
             recursesplit(nd, sub, lpp)
+            print(sub)
             for i in sub:
                 parse_packet(i)
         else:
             l = int(nd[:15], 2)
-            print(l, nd)
             nd = nd[15:]
-            print(l, nd)
-            first_packet = nd[:11]
-            nd = nd[11:]
-            if l > 11:
-                parse_packet(first_packet)
-                parse_packet(nd)
-            else:
-                parse_packet(first_packet)
+            print("nd", nd)
+            packets = []
+            splitparse(nd, packets)
+            print(packets)
+            for i in packets:
+                parse_packet(i)
+
+def splitparse(all: str, packets: list):
+    initial = all[:6]
+    all = all[6:]
+    idk = True
+    for i, v in enumerate(all):
+        if (i+1)%5 == 0:
+            if v == '0':
+                packets.append(initial + all[:i+1])
+                splitparse(all[i+1:], packets)
+                idk = False
+                break
+    if idk:
+        # if len(all)%5 != 0:
+        #     extra = 5-len(all)%5
+        #     all = all + extra*'0'
+        packets.append(initial+all)
+        
 
 
 parse_packet(nd)
