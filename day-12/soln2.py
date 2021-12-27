@@ -1,6 +1,3 @@
-from termcolor import colored
-
-
 data = open('sample.txt', 'r').read()
 
 class Cave:
@@ -22,21 +19,18 @@ class Cave:
         return self.name
         
     def dfs(self, path: list, cavemap: 'Caves'):
+        tmp = False
         if not self.isbig:
-            if cavemap.ctwice == "" and cavemap.twiced.count(self.name) == 0 and self.name != 'start':
-                print(colored(cavemap.twiced, 'green'))
-                print(self)
-                print(cavemap.ctwice)
-                cavemap.ctwice = self.name
-                cavemap.twiced.append(self.name)
+            if not cavemap.currentsmallcave and self.name != 'start':
+                cavemap.currentsmallcave = True
+                tmp = True
             else:
                 self.visited = True
         path.append(self.name)
 
-        print(path)
         if self.name == 'end':
-            cavemap.pathsofar.append(path.copy())
-            print(colored(path, 'red'))
+            if not path in cavemap.pathsofar:
+                cavemap.pathsofar.append(path.copy())
             cavemap.search(path.pop()).visited = False
             return True
 
@@ -45,10 +39,8 @@ class Cave:
 
         for cave in totr:
             cave.dfs(path, cavemap)
-        if cavemap.ctwice == self.name and path.count(self.name) == 1:
-            print(colored(path, 'blue'))
-            cavemap.ctwice = ""
-            cavemap.twiced.append(self.name)
+        if tmp:
+            cavemap.currentsmallcave = False
             self.visited = True
             for cave in totr:
                 cave.dfs(path, cavemap)
@@ -56,9 +48,9 @@ class Cave:
 
 class Caves:
     caves: list[Cave] = []
-    pathsofar: list = []
-    twiced: list[str] = []
-    ctwice = ""
+    pathsofar = []
+    currentsmallcave = False
+
     def search(self, name: str):
         for i in self.caves:
             if i.name == name:
@@ -86,6 +78,4 @@ for i in data.splitlines():
 start = cavemap.search('start')
 path = []
 start.dfs(path, cavemap)
-# for i in cavemap.pathsofar:
-#     print(i)
 print(len(cavemap.pathsofar))
