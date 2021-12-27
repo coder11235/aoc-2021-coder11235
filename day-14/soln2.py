@@ -1,50 +1,87 @@
-data = open('sample.txt', 'r').read()
+"""
+well here is soln
+first parse it and then convert it to a dict having the pairs and the number of them
 
-def parse(data: str):
-    template, rules = data.split('\n\n')
-    letters = set(template)
-    rules = rules.splitlines()
-    hashrl = {}
-    for i in rules:
-        ln = i.split(' -> ')
-        hashrl.update({(ln[0][0], ln[0][1]): ln[1]})
-        letters.add(ln[1])
-    return list(template), hashrl, letters
+loop
+    create an empty dict for the updated values
+    iterate through the pairs
+    split the pair
+    form 2 new one by looking up the table
+    set or add the values to the new dict
 
-template, rules, letters = parse(data)
+when you are done
+count the first number in all keys
+incomplete soln over
+--------------------
+edit
+get the last element of the template too because u only count the first of the pair
+last += 1
+complete soln over
+"""
 
-tplcnt = {}
+inp = open('data.txt', 'r').read()
 
-for i in range(len(template) - 1):
-    s = (template[i], template[i+1])
-    if s in tplcnt:
-        tplcnt.update({s: tplcnt[s] + 1})
-    else:
-        tplcnt.update({s: 1})
+def parse(inp: str):
+    template, rls = inp.split('\n\n')
+    last = template[-1:]
+    tmpl = {}
+    rules = {}
+    for i in range(len(template) - 1):
+        if (template[i], template[i+1]) in tmpl:
+            tmpl[(template[i], template[i+1])] = tmpl[(template[i], template[i+1])] + 1
+        else:
+            tmpl[(template[i], template[i+1])] = 1
+    for rl in rls.splitlines():
+        t, i = rl.split(' -> ')
+        rules[tuple(t)] = i
+    return tmpl, rules, last
 
-for _ in range(10):
-    tmp = {}
-    for key in tplcnt:
-        m = rules[key]
-        l, r = key
-        lef = (l, m)
-        rig = (m, r)
-        if not lef in tmp:
-            tmp.update({lef: 0})
-        if not rig in tmp:
-            tmp.update({rig: 0})
-        tmp.update({lef: tmp[lef] + 1})
-        tmp.update({rig: tmp[rig] + 1})
-    for key in tmp:
-        if not key in tplcnt:
-            tplcnt.update({key: 0})
-        tplcnt.update({key: tmp[key] + tplcnt[key]})
+template, rules, last = parse(inp)
 
-ltcnt = {}
+for c in range(40):
+    newtmpl = {}
+    for tmpl in template:
+        (l, r) = tmpl
+        cnt = template[tmpl]
+        i = rules[(l, r)]
+        ln = (l, i)
+        rn = (i, r)
+        if ln in newtmpl:
+            newtmpl[ln] = newtmpl[ln] + cnt
+        else:
+            newtmpl[ln] = cnt
+        if rn in newtmpl:
+            newtmpl[rn] = newtmpl[rn] + cnt
+        else:
+            newtmpl[rn] = cnt
+    template = newtmpl
+    count = 0
+    for i in template:
+        count += template[i]
 
-for i in tplcnt:
-    count = tplcnt[i]
-    l = i[0]
-    ltcnt.update({l: count})
+def count(template: dict):
+    counthash = {}
+    for i in template:
+        cnt = template[i]
+        l = i[0]
+        if l in counthash:
+            counthash[l] = counthash[l] + cnt
+        else:
+            counthash[l] = cnt
+    counthash[last] += 1
+    return counthash
 
-print(ltcnt)
+def sub(counthash: dict):
+    lowest = float("inf")
+    highest = 0
+    for i in counthash:
+        cnt = counthash[i]
+        if cnt < lowest:
+            lowest = cnt
+        if cnt > highest:
+            highest = cnt
+    print(highest - lowest)
+
+counthash = count(template)
+
+sub(counthash)
