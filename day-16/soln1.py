@@ -123,18 +123,15 @@ def basic_parse(packet: str):
     packet = packet[6:]
     global version_sum
     version_sum += version
-    print(f"ve: {version}, ti: {type_id}, content: {packet}, version_sum: {version_sum}")
     if type_id == 4:
         return parse_literal(packet)
     else:
         lti = packet[0]
         if lti == '0':
             length = int(packet[1:16], 2)
-            print("op type: 0", length)
             return(parse_first_operator(packet[16:], length))
         else:
             length = int(packet[1:12], 2)
-            print("op type: 1", length)
             return(parse_second_operator(packet[12:], length))
 
 basic_parse(packet)
