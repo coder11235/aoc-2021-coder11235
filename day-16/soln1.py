@@ -17,102 +17,125 @@ binmaps = {
     'F' : '1111',
 }
 
-data = '620080001611562C8802118E34'
-
-
+data = open('data.txt', 'r').read().strip()
 versions = []
+packet = ''
 
-nd = ''
+version_sum = 0
 
 for i in data:
-    nd += binmaps[i]
+    packet += binmaps[i]
 
-def parse_packet(nd):
-
-    # discard remaining
-    data = reversed(nd)
-    trd = False
-    nd = ""
-    for i in data:
-        if i == "0" and not trd: continue
-        nd += i
-        trd = True
-    nd = nd[::-1]
-
-    # #append till 5s
-    # extra = len(nd)%5
-    # if extra == 0: extra = 5
-    # nd = "0"*(5-extra) + nd
-
-    #fetch version and type
-    version = int(nd[:3], 2)
-    versions.append(version)
-    nd = nd[3:]
-    type_id = int(nd[:3], 2)
-    nd = nd[3:]
-
-    if type_id == 4:
-        # discard first bit of every 5 bits
-        def recsplit(arr: str):
-            if len(arr) < 5:
-                return arr[1:]
-            nr = arr[1:5]
-            rest = arr[5:]
-            return nr + recsplit(rest)
-        value = int(recsplit(nd), 2)
-
-        # debug
-        print(f"literal packet ve:{version}, ti:{type_id}, v:{value}")
-    else:
-        # perform operator operations
-        len_type_id = nd[:1]
-        nd = nd[1:]
-        print(f"op ve: {version}, lentype: {len_type_id}")
-        if len_type_id == '1':
-            l = int(nd[:11], 2)
-            nd = nd[11:]
-            lpp = len(nd)//l
-            sub = []
-            def recursesplit(arr: str, sub: list, lpp: int):
-                if len(arr) < lpp:
-                    return
-                first = arr[:lpp]
-                sub.append(first)
-                rest = arr[lpp:]
-                recursesplit(rest, sub, lpp)
-            recursesplit(nd, sub, lpp)
-            print(sub)
-            for i in sub:
-                parse_packet(i)
+def clear_padding_zeroes(packet: str):
+    # remove 0s at end
+    packet = packet[::-1]
+    newpacket = ""
+    encountered = False
+    for i in packet:
+        if not encountered:
+            if i != '0':
+                encountered = True
+                newpacket += i
         else:
-            l = int(nd[:15], 2)
-            nd = nd[15:]
-            print("nd", nd)
-            packets = []
-            splitparse(nd, packets)
-            print(packets)
-            for i in packets:
-                parse_packet(i)
+            newpacket += i
+    return newpacket[::-1]
 
-def splitparse(all: str, packets: list):
-    initial = all[:6]
-    all = all[6:]
-    idk = True
-    for i, v in enumerate(all):
-        if (i+1)%5 == 0:
-            if v == '0':
-                packets.append(initial + all[:i+1])
-                splitparse(all[i+1:], packets)
-                idk = False
-                break
-    if idk:
-        # if len(all)%5 != 0:
-        #     extra = 5-len(all)%5
-        #     all = all + extra*'0'
-        packets.append(initial+all)
-        
+packet = clear_padding_zeroes(packet)
 
+"""
+accepts the content of a literal with soe extra data
 
-parse_packet(nd)
-print(versions)
-print(sum(versions))
+parses a literal
+
+returns the part of the content that isnt part of the ltieral
+if it used all the content then it returns None
+"""
+def parse_literal(content: str):
+    bits = ''
+
+    # recusrive function that accepts a literal and extra
+    def recurse_unpad(cnt):
+        # trims the first bit
+        first = cnt[0]
+        cnt = cnt[1:]
+        nonlocal bits
+
+        # case to see if its not the last litieral value
+        if first == '1':
+            bits += cnt[0:4]
+            rest = cnt[4:]
+            val = recurse_unpad(rest)
+            # return None back if it used up everything or else return the extra content
+            if val is not None:
+                return val
+        else:
+            # if it used up the entire literal
+            if len(cnt) == 4:
+                bits += cnt[0:4]
+            # if it did but it also has to take some more bits to get a multiple of 4
+            elif len(cnt) < 4:
+                rem = 4-len(cnt)
+                bits += cnt + '0'*rem
+            # if it didnt use up the entire literal and has some extra left
+            else:
+                bits += cnt[0:4]
+                extra = cnt[4:]
+                # return the extra bits
+                return extra
+        # return None because it used up everything
+        return None
+    
+    # res is the extra/ None value for the extra chars
+    res = recurse_unpad(content)
+    return res
+
+"""
+accepts the content of the packet and all ahead of it and its length
+
+splits the data into the correct content and parses it
+
+returns the extra
+"""
+def parse_first_operator(content: str, length: int):
+    disc = content[length:]
+    content = content[:length]
+    # if the content is None that means it encountered a literal packet which used up all data and ended the packet
+    while content is not None:
+        content = basic_parse(content)
+    if disc != '':
+        return disc
+    else:
+        return None
+
+def parse_second_operator(content: str, length: int):
+    count = 0
+    while count < length:
+        content = basic_parse(content)
+        count += 1
+    if content != '':
+        return content
+    else:
+        return None
+
+def basic_parse(packet: str):
+    version = int(packet[:3], 2)
+    type_id = int(packet[3:6], 2)
+    packet = packet[6:]
+    global version_sum
+    version_sum += version
+    print(f"ve: {version}, ti: {type_id}, content: {packet}, version_sum: {version_sum}")
+    if type_id == 4:
+        return parse_literal(packet)
+    else:
+        lti = packet[0]
+        if lti == '0':
+            length = int(packet[1:16], 2)
+            print("op type: 0", length)
+            return(parse_first_operator(packet[16:], length))
+        else:
+            length = int(packet[1:12], 2)
+            print("op type: 1", length)
+            return(parse_second_operator(packet[12:], length))
+
+basic_parse(packet)
+print(version_sum)
