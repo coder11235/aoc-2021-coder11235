@@ -130,7 +130,6 @@ def basic_parse(packet: str):
     packet = packet[6:]
     global version_sum
     version_sum += version
-    print(f"ve: {version}, ti: {type_id}, content: {packet}, version_sum: {version_sum}")
     if type_id == 4:
         return parse_literal(packet)
     else:
@@ -160,5 +159,4 @@ def basic_parse(packet: str):
             val = 1 if values[0] == values[1] else 0
         return extra, val
 
-print(basic_parse(packet))
-print(version_sum)
+print(basic_parse(packet)[1])
