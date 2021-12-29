@@ -2,3 +2,6 @@ cookievals.py
 __pycache__/
 sel.py
 target/
+share/
+lib/
+bin
