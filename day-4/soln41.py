@@ -34,15 +34,11 @@ def checkforverticalwin(boardarray):
     return False
 
 def checkoff(boardarray: list[list], number, marked: list[list]):
-    indexi = None
-    indexj = None
     for i in range(0,5):
         for j in range(0,5):
             if boardarray[i][j] == number:
-                indexi = i
-                indexj = j
-    if indexi is not None:
-        marked[indexi][indexj] = True
+                marked[i][j] = True
+                return
 
 def summify(board: list[list[str]], marked: list[list[str]], number):
     sum = 0
