@@ -11,7 +11,7 @@ boards:list[list] = [[row.strip().replace('  ', ' ').split(' ') for row in board
 boardcheckedarray = []
 for i in range(0, len(boards)):
     markedarr = []
-    for i in range(0, 6):
+    for i in range(5):
         marked = [False]*5
         markedarr.append(marked)
     boardcheckedarray.append(markedarr)
