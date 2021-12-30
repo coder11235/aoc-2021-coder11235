@@ -1,6 +1,4 @@
-# NO IT DOESNT WORK AAAAAAAAAAAAAAAAAA
-
-data = open('sample.txt').read()
+data = open('data.txt').read()
 
 def parse(data: str):
     data = data.split(': ')[1]
@@ -32,29 +30,23 @@ def simulate(xv, yv):
 
         # return if in box
         if minx <= x <= maxx and miny <= y <= maxy:
-            return -1, my
+            return True, my
 
         # return if not possible at all
         if y <= miny and yv <= 0:
-            return 0, 0
+            return False, 0
         if x <= minx and xv <= 0:
-            return 0, 0
+            return False, 0
         if x >= maxx and xv >= 0:
-            return 1, 0
+            return False, 0
 
-xv = 0
-yv = 0
+ans = 0
 
-mmy = 0
-while True:
-    while True:
-        res, my = simulate(xv, yv)
-        if res == -1:
-            if mmy > my: mmy = my
-        elif res == 0: xv += 1
-        else:
-            break
-    yv += 1
-    res = simulate(minx, yv)
-    if res == 1:
-        break
+for xv in range(minx):
+    for yv in range(200):
+        success, my = simulate(xv, yv)
+        if success:
+            if my > ans:
+                ans = my
+
+print(ans)

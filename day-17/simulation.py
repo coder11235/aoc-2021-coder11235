@@ -17,7 +17,7 @@ x = 0
 y = 0
 
 xv = 6
-yv = 4
+yv = 9
 
 arr = [[0,0]]
 while not (target[0][0] <= x <= target[0][1] and target[1][0] <= y <= target[1][1]):
