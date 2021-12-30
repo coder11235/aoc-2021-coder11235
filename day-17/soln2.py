@@ -30,11 +30,7 @@ def simulate(xv, yv):
             return True
 
         # return if not possible at all
-        if y <= miny and yv <= 0:
-            return False
-        if x <= minx and xv <= 0:
-            return False
-        if x >= maxx and xv >= 0:
+        if (y <= miny and yv <= 0) or (x <= minx and xv <= 0) or (x >= maxx and xv >= 0):
             return False
 
 ans = 0
