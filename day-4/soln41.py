@@ -18,27 +18,18 @@ for i in range(0, len(boards)):
 
 def checkforhorizontalwin(boardarray):
     for i in boardarray:
-        val = i[0]
-        if val == False:
-            continue
-        won = True
         for j in i:
-            if val != j:
-                won = False
-        if won == True:
-            return True
-    return False
+            if j == False:
+                return False
+    return True
 
 def checkforverticalwin(boardarray):
-    for i in range(0, 5):
-        val = boardarray[0][i]
+    for i in range(5):
         won = True
-        if val == False:
-            continue
-        for j in range(0, 5):
-            if boardarray[j][i] != val:
+        for j in range(5):
+            if boardarray[j][i] == False:
                 won = False
-        if won == True:
+        if won:
             return True
     return False
 
