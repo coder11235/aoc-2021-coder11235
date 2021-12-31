@@ -1,8 +1,12 @@
 inp = open('sample.txt', 'r').read().splitlines()
+
 import math
+from termcolor import colored
 
 class Node:
-    count = -1
+    count = 0
+    debugcnt = -1
+    bpr: 'Node' = None
     def __init__(self, node: 'Node' = None):
         self.parent = node
         self.left = None
@@ -52,29 +56,53 @@ class Node:
         vals['idhash'] = hex(id(self))
         return str(vals)
 
-    def reduce_num(self):
+    def perform_explode(self):
+        # print()
+        # print(Node.count)
+        # Node.bpr.debugprint()
         Node.count += 1
-        if not isinstance(self, int):
-            if Node.count == 4:
-                self.explode()
-            elif isinstance(self.left, int) and self.left >= 10:
+        # self.debugprint()
+        if Node.count == 4:
+            if not isinstance(self.left, int):
+                self.left.explode()
+                return True
+            if not isinstance(self.right, int):
+                self.right.explode()
+                return True
+        if not isinstance(self.left, int):
+            if self.left.perform_explode():
+                return True
+        if not isinstance(self.right, int):
+            if self.right.perform_explode():
+                return True
+        Node.count -= 1
+        return False
+
+    def perform_split(self):
+        # Node.bpr.debugprint()
+        if isinstance(self.left, int):
+            if self.left >= 10:
                 newnode = Node()
                 newnode.left = self.left//2
                 newnode.right = math.ceil(self.left/2)
                 newnode.parent = self
                 self.left = newnode
-            elif isinstance(self.right, int) and self.right >= 10:
+                return True
+        else:
+            if self.left.perform_split():
+                return True
+        if isinstance(self.right, int):
+            if self.right >= 10:
                 newnode = Node()
                 newnode.left = self.right//2
                 newnode.right = math.ceil(self.right/2)
                 newnode.parent = self
                 self.right = newnode
-
-        if not isinstance(self.left, int):
-            self.left.reduce_num()
-        if not isinstance(self.right, int):
-            self.right.reduce_num()
-        Node.count -= 1
+                return True
+        else:
+            if self.right.perform_split():
+                return True
+        
 
     def explode(self):
         right = self.right
@@ -102,8 +130,23 @@ class Node:
         else:
             self.parent.left = 0
 
+    def retclr():
+        if Node.debugcnt == 0:
+            return 'cyan'
+        elif Node.debugcnt == 1:
+            return 'blue'
+        elif Node.debugcnt == 2:
+            return 'yellow'
+        elif Node.debugcnt == 3:
+            return 'red'
+        elif Node.debugcnt ==4:
+            return 'white'
+        else:
+            return 'red'
+            
     def debugprint(self, pr = False):
-        print('[', end='')
+        Node.debugcnt += 1
+        print(colored('[', Node.retclr()), end='')
         if isinstance(self.left, int):
             print(self.left,end='')
         else:
@@ -113,9 +156,10 @@ class Node:
             print(self.right, end='')
         else:
             self.right.debugprint(True)
-        print(']', end='')
+        print(colored(']',Node.retclr()), end='')
         if not pr:
             print()
+        Node.debugcnt -= 1
 
 def parse(line: str):
     current_node = Node()
@@ -142,21 +186,19 @@ def add(node1: Node, node2: Node):
     parent.right = node2
     node1.parent = parent
     node2.parent = parent
+    Node.bpr = parent
     return parent
 
 first = inp.pop(0)
 first = propparse(first)
-for _ in range(5):
-    first.reduce_num()
+Node.bpr = first
 
 for i in inp:
     node = propparse(i)
-    for _ in range(40):
-        node.reduce_num()
-        first.reduce_num()
     first = add(first, node)
-    for _ in range(40):
-        node.reduce_num()
-        first.reduce_num()
+    for _ in range(1000):
+        if not first.perform_explode():
+            first.perform_split()
+        Node.count = 0
 
 first.debugprint()
