@@ -1,4 +1,4 @@
-inp = open('sample.txt', 'r').read().splitlines()
+inp = open('data.txt', 'r').read().splitlines()
 
 import math
 from termcolor import colored
@@ -201,4 +201,17 @@ for i in inp:
             first.perform_split()
         Node.count = 0
 
-first.debugprint()
+def check_magnitude(node: Node):
+    left = 0
+    right = 0
+    if isinstance(node.left, int):
+        left = node.left
+    else:
+        left = check_magnitude(node.left)
+    if isinstance(node.right, int):
+        right = node.right
+    else:
+        right = check_magnitude(node.right)
+    return 3*left + 2*right
+
+print(check_magnitude(first))
