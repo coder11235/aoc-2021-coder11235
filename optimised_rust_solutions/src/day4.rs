@@ -12,7 +12,32 @@ pub fn part1(input: &String) -> usize {
     return 5;
 }
 
-pub fn parse(input: &String) -> (Vec<u8>, Vec<Vec<Vec<u8>>>) {
+pub fn part2(input: &String) -> usize {
+    let (numbers, boards) = parse(input);
+    let mut board_won_array = vec![false; boards.len()];
+    let mut checking_array = construct_checked_array(boards.len());
+    for number in numbers {
+        for bnum in 0..boards.len() {
+            check_number(&boards[bnum], number, &mut checking_array[bnum]);
+            if check_for_horizontal_win(&checking_array[bnum]) || check_for_vertical_win(&checking_array[bnum]) {
+                board_won_array[bnum] = true;
+                let mut has_everyone_else_won = true;
+                for i in &board_won_array {
+                    if *i == false {
+                        has_everyone_else_won = false;
+                        break;
+                    }
+                }
+                if has_everyone_else_won {
+                    return find_sum(&boards[bnum], &checking_array[bnum], number);
+                }
+            }
+        }
+    }
+    return 5;
+}
+
+fn parse(input: &String) -> (Vec<u8>, Vec<Vec<Vec<u8>>>) {
     let mut boards = input.split("\n\n");
     let numbers: Vec<u8> = boards.next().unwrap()
     .split(',').map(|chr| chr.parse::<u8>().unwrap()).collect();
