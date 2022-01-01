@@ -1,11 +1,16 @@
 file = open('data.txt', 'r')
 data = file.read().split('\n')
 
-points = []
+points = {}
+
+def ins_point(x, y):
+    global points
+    if (x,y) in points:
+        points[(x,y)] += 1
+    else:
+        points[(x,y)] = 1
 
 def diagonalcount(lx, ly, rx, ry):
-    temppoints = []
-    print('borders: ', (lx, ly), (rx, ry))
     if (rx < lx and ry < ly) or (ly < ry and lx > rx):
         temp = lx, ly
         lx, ly = rx, ry
@@ -13,11 +18,10 @@ def diagonalcount(lx, ly, rx, ry):
             
     if lx < rx and ly < ry:
         for i in range(0, rx - lx + 1):
-            temppoints.append([lx + i, ly + i])
+            ins_point(lx + i, ly + i)
     else:
         for i in range(0, rx - lx + 1):
-            temppoints.append([lx + i, ly - i])
-    return temppoints
+            ins_point(lx + i, ly - i)
 
 for i in data:
     left, right = i.split('->')
@@ -33,32 +37,24 @@ for i in data:
     if lx == rx:
         if ly <= ry:
             for i in range(ly, ry + 1):
-                temppoints.append([rx, i])
-        elif ly >= ry:
-            for i in range(ry, ly + 1):
-                temppoints.append([rx, i])
+                ins_point(rx, i)
         else:
-            temppoints.append([rx, ry])
+            for i in range(ry, ly + 1):
+                ins_point(rx, i)
     elif ly == ry:
         if lx <= rx:
             for i in range(lx, rx + 1):
-                temppoints.append([i, ry])
-        elif lx >= rx:
-            for i in range(rx, lx + 1):
-                temppoints.append([i, ry])
+                ins_point(i, ry)
         else:
-            temppoints.append([rx, ry])
-    elif abs(rx - lx) == abs(ry - ly):
-        temppoints = diagonalcount(lx, ly, rx, ry)
+            for i in range(rx, lx + 1):
+                ins_point(i, ry)
+    else:
+        diagonalcount(lx, ly, rx, ry)
 
-    points += temppoints
-
-firstencountered = []
 count = 0
-for i in points:
-    if firstencountered.count(i) == 1:
+
+for val in points.values():
+    if val >= 2:
         count += 1
-        print(count)
-    firstencountered.append(i)
 
 print(count)
