@@ -9,3 +9,34 @@ def parse_scanner(scannertxt: str):
     return parsedcoords
 
 scanners = [parse_scanner(i) for i in inp.split('\n\n')]
+
+scanners = [scanners[0]]
+
+rots = [
+    lambda a: (a[0], a[1], a[2]),
+    lambda a: (a[2], a[0], a[1]),
+    lambda a: (a[1], a[2], a[0]),
+]
+
+negtrans = [
+    lambda a: (-a[0], a[1], a[2]),
+    lambda a: (a[0], -a[1], a[2]),
+    lambda a: (a[0], a[1], -a[2]),
+    lambda a: (-a[0], -a[1], a[2]),
+    lambda a: (a[0], -a[1], -a[2]),
+    lambda a: (-a[0], a[1], -a[2]),
+    lambda a: (-a[0], -a[1], -a[2]),
+    lambda a: (a[0], a[1], a[2]),
+]
+
+def getallorientations(point):
+    orientations = []
+    for i in rots:
+        for j in negtrans:
+            orientations.append(i(j(point)))
+    return orientations
+
+for scanner in scanners:
+    main_b = scanner[0]
+    for beacon in scanner[1:]:
+        
