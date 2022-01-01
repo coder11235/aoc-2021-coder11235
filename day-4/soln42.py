@@ -1,4 +1,5 @@
 file = open('datat.txt', 'r')
+import time
 
 boards = file.read()
 boards = boards.split('\n\n')
@@ -9,7 +10,6 @@ boards = [board.split('\n') for board in boards]
 boards:list[list] = [[row.strip().replace('  ', ' ').split(' ') for row in board] for board in boards]
 
 boardwonarray = [False]*len(boards)
-print(boardwonarray)
 
 boardcheckedarray = []
 for i in range(0, len(boards)):
@@ -21,40 +21,27 @@ for i in range(0, len(boards)):
 
 def checkforhorizontalwin(boardarray):
     for i in boardarray:
-        val = i[0]
-        if val == False:
-            continue
-        won = True
         for j in i:
-            if val != j:
-                won = False
-        if won == True:
-            return True
-    return False
+            if j == False:
+                return False
+    return True
 
 def checkforverticalwin(boardarray):
-    for i in range(0, 5):
-        val = boardarray[0][i]
+    for i in range(5):
         won = True
-        if val == False:
-            continue
-        for j in range(0, 5):
-            if boardarray[j][i] != val:
+        for j in range(5):
+            if boardarray[j][i] == False:
                 won = False
-        if won == True:
+        if won:
             return True
     return False
 
 def checkoff(boardarray: list[list], number, marked: list[list]):
-    indexi = None
-    indexj = None
     for i in range(0,5):
         for j in range(0,5):
             if boardarray[i][j] == number:
-                indexi = i
-                indexj = j
-    if indexi is not None:
-        marked[indexi][indexj] = True
+                marked[i][j] = True
+                return
 
 def summify(board: list[list[str]], marked: list[list[str]], number):
     sum = 0
@@ -77,6 +64,5 @@ for number in numbers:
                 if i == False :
                     haseveryoneelsewon = False
             if haseveryoneelsewon:
-                print(boardnum)
                 print(summify(boards[boardnum], boardcheckedarray[boardnum], number))
                 exit()
