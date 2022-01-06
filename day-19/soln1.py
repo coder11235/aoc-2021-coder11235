@@ -28,15 +28,3 @@ negtrans = [
     lambda a: (-a[0], -a[1], -a[2]),
     lambda a: (a[0], a[1], a[2]),
 ]
-
-def getallorientations(point):
-    orientations = []
-    for i in rots:
-        for j in negtrans:
-            orientations.append(i(j(point)))
-    return orientations
-
-for scanner in scanners:
-    main_b = scanner[0]
-    for beacon in scanner[1:]:
-        
