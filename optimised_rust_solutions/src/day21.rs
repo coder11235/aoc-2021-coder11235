@@ -13,7 +13,7 @@ pub fn part2(input: &String) -> usize {
             }
         }
     }
-    5
+    if c1 > c2 {c1 as usize} else {c2 as usize}
 }
 
 fn play1(p1: u8, p2: u8, scp1: u8, scp2: u8, mv: u8, c1: &mut u64, c2: &mut u64) {
