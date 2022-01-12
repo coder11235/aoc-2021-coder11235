@@ -5,9 +5,7 @@ use itertools::Itertools;
 pub fn part1(input: &String) -> usize {
     let mut points: HashMap<(u16, u16), u32> = HashMap::new();
     for ln in input.lines() {
-        let mut splt = ln.split(" -> ");
-        let (lx, ly) = splt.next().unwrap().split(',').map(|x| x.parse::<u16>().unwrap()).next_tuple().unwrap();
-        let (rx, ry) = splt.next().unwrap().split(',').map(|x| x.parse::<u16>().unwrap()).next_tuple().unwrap();
+        let ((lx, ly),(rx, ry)) = ln.split(" -> ").map(|s| s.split(',').map(|x| x.parse::<u16>().unwrap()).next_tuple().unwrap()).next_tuple().unwrap();
         if lx == rx {
             if ly <= ry {
                 for i in ly..(ry+1) {
@@ -45,9 +43,7 @@ pub fn part1(input: &String) -> usize {
 pub fn part2(input: &String) -> usize {
     let mut points: HashMap<(u16, u16), u32> = HashMap::new();
     for ln in input.lines() {
-        let mut splt = ln.split(" -> ");
-        let (lx, ly) = splt.next().unwrap().split(',').map(|x| x.parse::<u16>().unwrap()).next_tuple().unwrap();
-        let (rx, ry) = splt.next().unwrap().split(',').map(|x| x.parse::<u16>().unwrap()).next_tuple().unwrap();
+        let ((lx, ly),(rx, ry)) = ln.split(" -> ").map(|s| s.split(',').map(|x| x.parse::<u16>().unwrap()).next_tuple().unwrap()).next_tuple().unwrap();
         if lx == rx {
             if ly <= ry {
                 for i in ly..(ry+1) {
