@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-
+use std::mem::swap;
 use itertools::Itertools;
 
 pub fn part1(input: &String) -> usize {
@@ -82,13 +82,9 @@ pub fn part2(input: &String) -> usize {
 }
 
 fn ins_diags(mut lx: u16, mut ly: u16,mut rx: u16, mut ry: u16, hash: &mut HashMap<(u16, u16), u32>) {
-    if (rx < lx && ry < ly) || (ly < ry && lx > rx) {
-        let mut tmp = lx;
-        lx = rx;
-        rx = tmp;
-        tmp = ly;
-        ly = ry;
-        ry = tmp;
+    if (ly < ry || ry < ly) && rx < lx {
+        swap(&mut lx, &mut rx);
+        swap(&mut ly, &mut ry);
     }
 
     if lx < rx && ly < ry {

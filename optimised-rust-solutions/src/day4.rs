@@ -9,7 +9,7 @@ pub fn part1(input: &String) -> usize {
             }
         }
     }
-    return 5;
+    panic!("some issue in d5p1");
 }
 
 pub fn part2(input: &String) -> usize {
@@ -23,7 +23,7 @@ pub fn part2(input: &String) -> usize {
                 board_won_array[bnum] = true;
                 let mut has_everyone_else_won = true;
                 for i in &board_won_array {
-                    if *i == false {
+                    if !(i) {
                         has_everyone_else_won = false;
                         break;
                     }
@@ -34,7 +34,7 @@ pub fn part2(input: &String) -> usize {
             }
         }
     }
-    return 5;
+    panic!("some issue in d5p1");
 }
 
 fn parse(input: &String) -> (Vec<u8>, Vec<Vec<Vec<u8>>>) {
@@ -43,10 +43,10 @@ fn parse(input: &String) -> (Vec<u8>, Vec<Vec<Vec<u8>>>) {
     .split(',').map(|chr| chr.parse::<u8>().unwrap()).collect();
     let boards = boards.map(|board| {
         board.lines().map(|row| {
-            row.split(" ").filter(|x | *x != "").map(|x| x.parse::<u8>().unwrap()).collect::<Vec<u8>>()
+            row.split(' ').filter(|x | !x.is_empty()).map(|x| x.parse::<u8>().unwrap()).collect::<Vec<u8>>()
         }).collect::<Vec<Vec<u8>>>()
     }).collect::<Vec<Vec<Vec<u8>>>>();
-    return (numbers, boards)
+    (numbers, boards)
 }
 
 fn construct_checked_array(len: usize) -> Vec<Vec<Vec<bool>>> {
@@ -58,7 +58,7 @@ fn construct_checked_array(len: usize) -> Vec<Vec<Vec<bool>>> {
         }
         boardslist.push(board);
     }
-    return boardslist;
+    boardslist
 }
 
 fn check_number(board: &Vec<Vec<u8>>, number: u8, checked_array: &mut Vec<Vec<bool>>) {
@@ -102,7 +102,7 @@ fn find_sum(board: &Vec<Vec<u8>>, checking_array: &Vec<Vec<bool>>, number: u8) -
     let mut sum = 0;
     for i in 0..5 {
         for j in 0..5 {
-            if checking_array[i][j] == false {
+            if !checking_array[i][j] {
                 sum += board[i][j] as usize;
             }
         }

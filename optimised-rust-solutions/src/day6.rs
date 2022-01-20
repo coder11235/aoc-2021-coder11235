@@ -26,5 +26,5 @@ fn parse(input: &String) -> Vec<usize> {
         let parsed = i.parse::<usize>().unwrap();
         counts[parsed] += 1;
     }
-    return counts;
+    counts
 }

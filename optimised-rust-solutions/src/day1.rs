@@ -8,7 +8,7 @@ pub fn part1(input: &String) -> isize{
         }
         prev = cur;
     }
-    return count;
+    count
 }
 
 pub fn part2(input: &String) -> isize {
@@ -19,5 +19,5 @@ pub fn part2(input: &String) -> isize {
             count += 1;
         }
     }
-    return count;
+    count
 }

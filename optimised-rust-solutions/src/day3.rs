@@ -3,8 +3,7 @@ use std::str::Lines;
 pub fn part1(input: &String) -> usize{
     let mut lines= input.lines();
     let (gm, eps) = get_bits_mode(&mut lines);
-    return usize::from_str_radix(&gm, 2).unwrap()
-    * usize::from_str_radix(&eps, 2).unwrap();
+    usize::from_str_radix(&gm, 2).unwrap() * usize::from_str_radix(&eps, 2).unwrap()
 }
 
 fn get_bits_mode(lines: &mut Lines) -> (String, String) {
@@ -25,7 +24,7 @@ fn get_bits_mode(lines: &mut Lines) -> (String, String) {
         gm.push(if i < half {'0'} else {'1'});
         eps.push(if i < half {'1'} else {'0'});
     };
-    return (gm, eps);
+    (gm, eps)
 }
 
 fn get_dig_max(lines: &Vec<&str>, digit: usize) -> char {
@@ -35,7 +34,7 @@ fn get_dig_max(lines: &Vec<&str>, digit: usize) -> char {
             cnt += 1.0;
         }
     }
-    return if cnt >= lines.len() as f64/2.0 {'1'} else {'0'};
+    if cnt >= lines.len() as f64/2.0 {'1'} else {'0'}
 }
 
 pub fn part2(input: &String) -> usize {
@@ -81,5 +80,5 @@ pub fn part2(input: &String) -> usize {
             break;
         }
     }
-    return oxygen_rating * co2_rating;
+    oxygen_rating * co2_rating
 }
