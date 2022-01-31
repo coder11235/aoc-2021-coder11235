@@ -1,5 +1,4 @@
 inp = open('sample.txt','r').read()
-import itertools
 
 def parse_scanner(scannertxt: str):
     lines = scannertxt.splitlines()
