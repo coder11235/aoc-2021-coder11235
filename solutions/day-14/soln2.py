@@ -55,9 +55,6 @@ for c in range(40):
         else:
             newtmpl[rn] = cnt
     template = newtmpl
-    count = 0
-    for i in template:
-        count += template[i]
 
 def count(template: dict):
     counthash = {}

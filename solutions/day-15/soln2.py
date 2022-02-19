@@ -1,5 +1,4 @@
 class Heap:
-    values: list[tuple[int, int], int]
     def __init__(self):
         self.values = []
     def picklowest(self):
