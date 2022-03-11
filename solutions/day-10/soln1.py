@@ -3,16 +3,12 @@ from collections import deque
 data = open('data.txt', 'r').read().split('\n')
 
 score = 0
-
-def getscore(ch):
-    if ch == ")":
-        return 3
-    elif ch == "]":
-        return 57
-    elif ch == "}":
-        return 1197
-    else:
-        return 25137
+SCORE_MAP = {
+	")":3,
+	"]":57,
+	"}":1197,
+	">":25137
+}
 
 for line in data:
     latest = deque()
@@ -23,7 +19,7 @@ for line in data:
         else:
             lt = latest.pop()
             if not (lt == "(" and ch == ")" or lt == "{" and ch == "}" or lt == "<" and ch == ">" or lt == "[" and ch == "]"):
-                score += getscore(ch)
+                score += SCORE_MAP[ch] 
                 break
 
 print(score)
