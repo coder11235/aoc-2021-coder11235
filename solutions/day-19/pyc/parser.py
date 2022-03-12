@@ -1,4 +1,4 @@
-data = open('../data/data.txt').read()
+data = open('../data/sample.txt').read()
 from functools import cache
 import json
 
@@ -82,5 +82,5 @@ for scanner in scanners:
             })
     scanners_proc.append(orientations)
 
-with open('../data/parsed_scanners.json', 'w') as fl:
+with open('../data/sampleparsed1.json', 'w') as fl:
     json.dump(scanners_proc, fl)

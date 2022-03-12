@@ -19,7 +19,7 @@ fn main() {
         &fs::read_to_string("parsed_scanners.json").unwrap()
     ).unwrap();
 
-    let mut overlapping_scanners: Vec<((u8, u8), ((u8, u8), (u8, u8)))> = Vec::new();
+    let mut overlapping_scanners: Vec<((u8, u8),(u8, u8))> = Vec::new();
 
     for (indexi, si) in scanner_data.iter().enumerate() {
         println!("{}", indexi);
@@ -42,11 +42,11 @@ fn main() {
 }
 
 type Scanner<'a> = &'a Vec<OrientationData>;
-fn compare_vectors(a: Scanner, b: Scanner) -> Option<((u8, u8),(u8, u8))> {
+fn compare_vectors(a: Scanner, b: Scanner) -> Option<(u8, u8)> {
     for i in a {
         for j in b {
             if compare_beacons(&i.beacons, &j.beacons) {
-                return Option::Some((i.orientation, j.orientation))
+                return Option::Some(j.orientation)
             }
         }
     }
