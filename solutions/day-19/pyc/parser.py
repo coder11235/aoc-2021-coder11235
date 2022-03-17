@@ -1,4 +1,4 @@
-data = open('../data/sample.txt').read()
+data = open('../data/data.txt').read()
 from functools import cache
 import json
 
@@ -55,7 +55,7 @@ def get_tr_indices():
     just gets a tuple from 0-7 and 0-2
     """
     lst = []
-    for i in range(7):
+    for i in range(8):
         for j in range(3):
             lst.append([i, j])
     return lst
@@ -82,5 +82,5 @@ for scanner in scanners:
             })
     scanners_proc.append(orientations)
 
-with open('../data/sampleparsed1.json', 'w') as fl:
+with open('../data/parsed_scanners.json', 'w') as fl:
     json.dump(scanners_proc, fl)
