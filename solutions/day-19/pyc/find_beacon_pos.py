@@ -2,7 +2,7 @@ import json
 
 # from .parser import negative_functions, rotation_functions
 
-data = json.loads(open('../data/parsed2.json').read())
+data = json.loads(open('../data/data_parsed_2.json').read())
 
 beacon_map = {0: []}
 
@@ -14,9 +14,11 @@ for i in data:
     cset.add(a)
     cset.add(b)
 
+print(cset)
 for i in range(30):
     if i not in cset:
         print(i)
+
 exit()
 
 while len(data) > 0:

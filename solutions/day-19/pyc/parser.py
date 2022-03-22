@@ -13,6 +13,7 @@ scanners
 """
 
 negative_functions = [
+    lambda a: [a[0], a[1], a[2]],
     lambda a: [-a[0], a[1], a[2]],
     lambda a: [a[0], -a[1], a[2]],
     lambda a: [a[0], a[1], -a[2]],
@@ -20,7 +21,6 @@ negative_functions = [
     lambda a: [a[0], -a[1], -a[2]],
     lambda a: [-a[0], a[1], -a[2]],
     lambda a: [-a[0], -a[1], -a[2]],
-    lambda a: [a[0], a[1], a[2]],
 ]
 
 rotation_functions = [
@@ -62,25 +62,22 @@ def get_tr_indices():
 
 scanners = data.split('\n\n')
 
-scanners_proc = []
+processed_scanners = []
 for scanner in scanners:
     orientations = []
-    for tri in get_tr_indices():
-        beacons_raw = scanner.splitlines()[1:]
-        beacons_proc = [
-            translate(tri[0], tri[1], [
-                int(val) for val in be.split(',')
-            ]) for be in beacons_raw
-        ]
-        beacons_relatives = []
-        for beacon in beacons_proc:
-            relative_beacons = [find_relative_beacon_pos(beacon, sec) for sec in beacons_proc]
-            beacons_relatives.append(relative_beacons)
+    beacons_raw = scanner.splitlines()[1:]
+    beacons_parsed = [[int(axis) for axis in beacon.split(',')] for beacon in beacons_raw]
+    for neg_index, rot_index in get_tr_indices():
+        transformed_beacons = [translate(neg_index, rot_index, beacon) for beacon in beacons_parsed]
+        all_beacons_relatives = []
+        for beacon in transformed_beacons:
+            relative_beacons = [find_relative_beacon_pos(beacon, secondary_beacon) for secondary_beacon in transformed_beacons]
+            all_beacons_relatives.append(relative_beacons)
         orientations.append({
-            "orientation": tri,
-            "beacons": beacons_relatives
-            })
-    scanners_proc.append(orientations)
+            "orientation": [neg_index, rot_index],
+            "beacons": all_beacons_relatives
+        })
+    processed_scanners.append(orientations)
 
-with open('../data/parsed_scanners.json', 'w') as fl:
-    json.dump(scanners_proc, fl)
+with open('../data/data_parsed_1.json', 'w') as fl:
+    json.dump(processed_scanners, fl)
