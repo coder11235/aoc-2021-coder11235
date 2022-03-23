@@ -8,20 +8,12 @@ logs = open('data/logs.txt','w')
 
 relative_scanner_orientations = []
 
-def beacon_tupler(beacon):
-    return [tuple(rel) for rel in beacon]
-
-def check_if_beacons_match(b1, b2):
-    """
-    takes 2 beacon sets
-    beacon 1:
-    [
-        relative_beacons:
-        [0,0,0]
-        [a,b,c]
-    ]
-    """
-    return len(set(beacon_tupler(b1))&set(beacon_tupler(b2)))
+# converts from
+# [[x,y,z], [x,y,z]]
+# to
+# {(x,y,z), (x,y,z)}
+# for finding common beacons using set and
+setify = lambda list: set([tuple(x) for x in list])
 
 def check_if_scanner_match(main, secondary):
     """
@@ -29,22 +21,33 @@ def check_if_scanner_match(main, secondary):
     scanner = [orientation, beacons]
     returns the orientation of the second scanner if they do or None
     """
-    _, main_beacons = main[0]
-    for orientation_index, second_beacons in secondary:
+    _, main_beacons, og_main = main[0] # og_main -> scanner's beacons under the first orientation
+    # main beacons = all the beacon sets data
+    for orientation_index, second_beacons, og_second in secondary: # main scanner's beacons under every first orientation
+        logs.write("\norientation:" + str(orientation_index))
         for mi, main_beacon in enumerate(main_beacons):
             for si, second_beacon in enumerate(second_beacons):
-                common_relatives = check_if_beacons_match(main_beacon, second_beacon)
-                if common_relatives > 2 :
-                    logs.write(f"orientation : {orientation_index}\n{mi} -> {si} = {common_relatives}\n")
-                    if common_relatives >= 12:
+                common_relatives = setify(main_beacon)&setify(second_beacon)
+                if len(common_relatives) > 2 :
+                    logs.write(f"\n{mi} -> {si} = {len(common_relatives)}\n")
+                    logs.write("main beacons "+str(og_main))
+                    logs.write('\n')
+                    logs.write("sec beacons"+str(og_second))
+                    logs.write('\n')
+                    logs.write("main beacons rel "+str(main_beacon))
+                    logs.write('\n')
+                    logs.write("sec beacons rel "+str(second_beacon))
+                    logs.write('\n')
+                    logs.write("common beacons"+str(common_relatives))
+                    if len(common_relatives) >= 12:
                         return orientation_index
 
 for main_index, main in enumerate(scanners):
     print(main_index)
-    logs.write(f"main scanner: {main_index}\n")
+    logs.write(f"\nmain scanner: {main_index}\n")
     for secondary_index, secondary in enumerate(scanners):
         if main_index == secondary_index: continue
-        logs.write(f"secondary scanner: {secondary_index}\n")
+        logs.write(f"\nsecondary scanner: {secondary_index}\n")
         # goal
         check_res = check_if_scanner_match(main, secondary)
         if check_res is not None:

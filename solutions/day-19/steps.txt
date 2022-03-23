@@ -10,7 +10,8 @@ read each scanner data
         for each beacon
             take all the other beacons in the scanner and find the relative positions to it in a list
             add them to the list of main beacons
-        add them and the negative and rotation function to the list of orientations [[neg, rot], beacons]
+         + add them and the negative and rotation function to the list of orientations [[neg, rot], beacons, original beacons] (debuggering)
+         - add them and the negative and rotation function to the list of orientations [[neg, rot], beacons]
     add them to the list of scanners
 convert all the data into json and dump it to 'parsed_(data/sample).json'
 
