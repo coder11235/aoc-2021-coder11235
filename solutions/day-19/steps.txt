@@ -1,15 +1,31 @@
-parsing:
+parsing: (parser.py)
 create a list of scanners
 read each scanner data
     for each scanner take all the beacons and parse them to processable format
     create a list of all orientations
     get all orientations possible
     for each orientation that the scanner can be in
-        tranforms the processed beacons to that format
+        transforms the processed beacons to that format
         create a list of all the main beacons which the other beacons are relative to
         for each beacon
-            take all the other beacons in the scanner and find the relative positons to it in a list
+            take all the other beacons in the scanner and find the relative positions to it in a list
             add them to the list of main beacons
         add them and the negative and rotation function to the list of orientations [[neg, rot], beacons]
     add them to the list of scanners
 convert all the data into json and dump it to 'parsed_(data/sample).json'
+
+finding which scanner is relative to which and under which orientation is the second scanner relative: (bea_rel_find.py)
+create a list of matching scanners under the format [[main scanner, second scanner],[orientation]]
+iterates through every scanner (main)
+    iterates through every scanner again(secondary)
+        goal: find if there are 12 common beacons between main scanner's area and secondary scanner's area
+        iterates through every orientation of the second scanner (sc_or)
+            iterates through every beacon of the main scanner
+                iterates through every beacon of sc_or
+                    if both the beacons have at least 12 common relative beacons then they are under the same area (scanner 2 is relative to scanner 1 under that orientation)
+                    add it all to the list
+dump the list to 'scan_rel_orient_(data/sample).json'
+verification:
+run through all the data
+check if every scanner exists
+

@@ -1,9 +1,8 @@
 from functools import cache
 from collections import deque
 from json import dump
-import json
 
-inp_type = "sample"
+inp_type = "data"
 
 data = open(f'data/{inp_type}.txt').read()
 
@@ -61,4 +60,4 @@ for scanner in data.split('\n\n'):
         orientations.append([orientation_method_data, main_beacons_proc])
     scanners.append(orientations)
 
-json.dump(scanners, open(f'data/parsed_{inp_type}.json', 'w'))
+dump(scanners, open(f'data/parsed_{inp_type}.json', 'w'))
