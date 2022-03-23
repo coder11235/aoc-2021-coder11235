@@ -1,0 +1,15 @@
+parsing:
+create a list of scanners
+read each scanner data
+    for each scanner take all the beacons and parse them to processable format
+    create a list of all orientations
+    get all orientations possible
+    for each orientation that the scanner can be in
+        tranforms the processed beacons to that format
+        create a list of all the main beacons which the other beacons are relative to
+        for each beacon
+            take all the other beacons in the scanner and find the relative positons to it in a list
+            add them to the list of main beacons
+        add them and the negative and rotation function to the list of orientations [[neg, rot], beacons]
+    add them to the list of scanners
+convert all the data into json and dump it to 'parsed_(data/sample).json'
