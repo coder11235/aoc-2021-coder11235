@@ -1,6 +1,6 @@
 from json import load, dump
 
-inp_type = "sample"
+inp_type = "data"
 
 scanners = load(open(f'data/parsed_{inp_type}.json'))
 

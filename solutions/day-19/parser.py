@@ -2,46 +2,36 @@ from functools import cache
 from collections import deque
 from json import dump
 
-inp_type = "sample"
+inp_type = "data"
 
 data = open(f'data/{inp_type}.txt').read()
 
-negative_orientations = [
-    lambda x: [x[0], x[1], x[2]],
-    lambda x: [-x[0], x[1], x[2]],
-    lambda x: [x[0], -x[1], x[2]],
-    lambda x: [x[0], x[1], -x[2]],
-    lambda x: [-x[0], -x[1], x[2]],
-    lambda x: [x[0], -x[1], -x[2]],
-    lambda x: [-x[0], x[1], -x[2]],
-    lambda x: [-x[0], -x[1], -x[2]],
-]
-
-def rotate(coordinate, rot_num):
-    queue = deque(coordinate)
-    queue.rotate(rot_num)
-    return list(queue)
-
-cache
-def all_possible_orientation_values():
-    """
-    returns simply a list between [0,0] and [7,2]
-    """
-    lst = []
-    for i in range(8):
-        for j in range(3):
-            lst.append([i, j])
-    return lst
-
-def transform(neg, rot, coord):
-    """
-    rotates coordinate by a negation and rotation value
-    negation is when any of the axis get negated eg (-x,y,z)
-    rotation is when the axis switch eg: (y,z,x)
-    """
-    rotated = rotate(coord, rot)
-    negatived = negative_orientations[neg](rotated)
-    return negatived
+transforms = [
+  lambda a: [ a[0],  a[1],  a[2]],
+  lambda a: [ a[1],  a[2],  a[0]],
+  lambda a: [ a[2],  a[0],  a[1]],
+  lambda a: [-a[0],  a[2],  a[1]],
+  lambda a: [ a[2],  a[1], -a[0]],
+  lambda a: [ a[1], -a[0],  a[2]],
+  lambda a: [ a[0],  a[2], -a[1]],
+  lambda a: [ a[2], -a[1],  a[0]],
+  lambda a: [-a[1],  a[0],  a[2]],
+  lambda a: [ a[0], -a[2],  a[1]],
+  lambda a: [-a[2],  a[1],  a[0]],
+  lambda a: [ a[1],  a[0], -a[2]],
+  lambda a: [-a[0], -a[1],  a[2]],
+  lambda a: [-a[1],  a[2], -a[0]],
+  lambda a: [ a[2], -a[0], -a[1]],
+  lambda a: [-a[0],  a[1], -a[2]],
+  lambda a: [ a[1], -a[2], -a[0]],
+  lambda a: [-a[2], -a[0],  a[1]],
+  lambda a: [ a[0], -a[1], -a[2]],
+  lambda a: [-a[1], -a[2],  a[0]],
+  lambda a: [-a[2],  a[0], -a[1]],
+  lambda a: [-a[0], -a[2], -a[1]],
+  lambda a: [-a[2], -a[1], -a[0]],
+  lambda a: [-a[1], -a[0], -a[2]],
+];
 
 def find_relative(orig, second):
     """
@@ -61,11 +51,9 @@ for scanner in data.split('\n\n'):
     # all the beacon sets in the orientation to be filled in below loop
     orientations = []
 
-    for orientation_method_data in all_possible_orientation_values():
-        neg_orient_val, rot_orient_val = orientation_method_data
-
+    for orientation_index in range(24):
         # all the beacon coordinates in this specefic orientation
-        beacon_trans = [transform(neg_orient_val, rot_orient_val, beacon) for beacon in beacon_orig_proc] 
+        beacon_trans = [transforms[orientation_index](beacon) for beacon in beacon_orig_proc] 
 
         # the final beacon sets of this orientation to be filled
         main_beacons_proc = []
@@ -74,7 +62,7 @@ for scanner in data.split('\n\n'):
             main_beacons_proc.append(relative_beacons)
 
         # appends the way the scanner was rotated for this, the list of beacon sets(each containing relative beacons to one beacon) and all beacons in this orientation
-        orientations.append([orientation_method_data, main_beacons_proc, beacon_trans])
+        orientations.append([orientation_index, main_beacons_proc, beacon_trans])
     scanners.append(orientations)
 
 dump(scanners, open(f'data/parsed_{inp_type}.json', 'w'))
