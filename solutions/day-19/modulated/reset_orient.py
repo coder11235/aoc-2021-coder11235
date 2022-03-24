@@ -28,8 +28,6 @@ def find_absolute():
         main, sec = i
         if main not in absolute_orientations and sec in absolute_orientations:
             absolute_orientations[main] = absolute_orientations[sec] + [scanner_relations[(sec, main)]]
-        elif main in absolute_orientations and sec not in absolute_orientations:
-            absolute_orientations[sec] = absolute_orientations[main] + [scanner_relations[i]]
     if not check_if_all_found():
         find_absolute()
 

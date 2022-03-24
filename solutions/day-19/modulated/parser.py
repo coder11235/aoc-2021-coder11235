@@ -1,5 +1,3 @@
-from functools import cache
-from collections import deque
 from json import dump
 
 inp_type = "data"
@@ -31,7 +29,7 @@ transforms = [
   lambda a: [-a[0], -a[2], -a[1]],
   lambda a: [-a[2], -a[1], -a[0]],
   lambda a: [-a[1], -a[0], -a[2]],
-];
+]
 
 def find_relative(orig, second):
     """

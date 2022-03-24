@@ -32,4 +32,6 @@ check if every scanner exists
 
 reset the orientations of each scanner to scanner 0's orientation: (reset_orient.py)
 
-reset the coordinate to absolute coordinates to scanner 0: (reset_coord.py)
+reset the coordinate to absolute coordinates to scanner 0: (find_sc_abs.py)
+
+...Solution files
