@@ -5,39 +5,39 @@ data = open(f'data/{inp_type}.txt').read()
 
 # list of all orientation transforms
 transforms = [
-  lambda a: [ a[0],  a[1],  a[2]],
-  lambda a: [ a[1],  a[2],  a[0]],
-  lambda a: [ a[2],  a[0],  a[1]],
-  lambda a: [-a[0],  a[2],  a[1]],
-  lambda a: [ a[2],  a[1], -a[0]],
-  lambda a: [ a[1], -a[0],  a[2]],
-  lambda a: [ a[0],  a[2], -a[1]],
-  lambda a: [ a[2], -a[1],  a[0]],
-  lambda a: [-a[1],  a[0],  a[2]],
-  lambda a: [ a[0], -a[2],  a[1]],
-  lambda a: [-a[2],  a[1],  a[0]],
-  lambda a: [ a[1],  a[0], -a[2]],
-  lambda a: [-a[0], -a[1],  a[2]],
-  lambda a: [-a[1],  a[2], -a[0]],
-  lambda a: [ a[2], -a[0], -a[1]],
-  lambda a: [-a[0],  a[1], -a[2]],
-  lambda a: [ a[1], -a[2], -a[0]],
-  lambda a: [-a[2], -a[0],  a[1]],
-  lambda a: [ a[0], -a[1], -a[2]],
-  lambda a: [-a[1], -a[2],  a[0]],
-  lambda a: [-a[2],  a[0], -a[1]],
-  lambda a: [-a[0], -a[2], -a[1]],
-  lambda a: [-a[2], -a[1], -a[0]],
-  lambda a: [-a[1], -a[0], -a[2]],
+  lambda a: ( a[0],  a[1],  a[2]),
+  lambda a: ( a[1],  a[2],  a[0]),
+  lambda a: ( a[2],  a[0],  a[1]),
+  lambda a: (-a[0],  a[2],  a[1]),
+  lambda a: ( a[2],  a[1], -a[0]),
+  lambda a: ( a[1], -a[0],  a[2]),
+  lambda a: ( a[0],  a[2], -a[1]),
+  lambda a: ( a[2], -a[1],  a[0]),
+  lambda a: (-a[1],  a[0],  a[2]),
+  lambda a: ( a[0], -a[2],  a[1]),
+  lambda a: (-a[2],  a[1],  a[0]),
+  lambda a: ( a[1],  a[0], -a[2]),
+  lambda a: (-a[0], -a[1],  a[2]),
+  lambda a: (-a[1],  a[2], -a[0]),
+  lambda a: ( a[2], -a[0], -a[1]),
+  lambda a: (-a[0],  a[1], -a[2]),
+  lambda a: ( a[1], -a[2], -a[0]),
+  lambda a: (-a[2], -a[0],  a[1]),
+  lambda a: ( a[0], -a[1], -a[2]),
+  lambda a: (-a[1], -a[2],  a[0]),
+  lambda a: (-a[2],  a[0], -a[1]),
+  lambda a: (-a[0], -a[2], -a[1]),
+  lambda a: (-a[2], -a[1], -a[0]),
+  lambda a: (-a[1], -a[0], -a[2]),
 ]
 
 def subtract(a, b):
     """subtracts b from a in coordinate format"""
-    return [s_axis_val - b[s_axis_index] for s_axis_index, s_axis_val in enumerate(a)]
+    return tuple([s_axis_val - b[s_axis_index] for s_axis_index, s_axis_val in enumerate(a)])
 
 def add(a, b):
     """adds b to a in coordinate format"""
-    return [s_axis_val + b[s_axis_index] for s_axis_index, s_axis_val in enumerate(a)]
+    return tuple([s_axis_val + b[s_axis_index] for s_axis_index, s_axis_val in enumerate(a)])
 
 # converts from list[list] to set(tuple) for comparision purposes
 setify = lambda list: set([tuple(x) for x in list])
@@ -53,7 +53,7 @@ def parse(data):
 
     for scanner in data.split('\n\n'):
         beacon_strs = scanner.splitlines()[1:]
-        beacon_orig_proc = [[int(axis) for axis in be.split(',')] for be in beacon_strs]
+        beacon_orig_proc = [tuple([int(axis) for axis in be.split(',')]) for be in beacon_strs]
         scanners.append(beacon_orig_proc)
 
         orientations = []
@@ -62,9 +62,9 @@ def parse(data):
 
             main_beacons_proc = []
             for main_beacon in beacon_trans:
-                relative_beacons = [subtract(second_beacon, main_beacon) for second_beacon in beacon_trans]
+                relative_beacons = set([subtract(second_beacon, main_beacon) for second_beacon in beacon_trans])
                 main_beacons_proc.append(relative_beacons)
-            orientations.append([orientation_index, main_beacons_proc])
+            orientations.append((orientation_index, main_beacons_proc))
 
         scanners_beacon_to_beacon_rel.append(orientations)
 
@@ -83,7 +83,7 @@ def find_connections(scanners: list):
         for orientation_index, second_beacons in secondary:
             for main_beacon in main_beacons:
                 for second_beacon in second_beacons:
-                    common_relatives = setify(main_beacon)&setify(second_beacon)
+                    common_relatives = main_beacon&second_beacon
                     if len(common_relatives) >= 12:
                         return orientation_index
 
@@ -152,7 +152,7 @@ def find_scanner_pos(connections, scanners):
     def find_matching_beacons(main, secondary):
         for mi, main_beacon in enumerate(main):
             for si, secondary_beacon in enumerate(secondary):
-                if len(setify(main_beacon)&setify(secondary_beacon)) >= 12:
+                if len(set(main_beacon)&set(secondary_beacon)) >= 12:
                     return mi, si
 
     scanner_abs_coordinates = {0: [0,0,0]}
