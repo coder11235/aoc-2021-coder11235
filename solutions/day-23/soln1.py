@@ -1,8 +1,12 @@
+import math
+from typing_extensions import Self
+
+
 inp = open('sample.txt').read()
 
 def parse(inp: str):
     inp = inp.splitlines()[2:4]
-    hallway = [[' ']*11]
+    hallway = ['#']*11
     rows = []
     for i in inp:
         row = []
@@ -22,49 +26,71 @@ def dpr(rows, hallway):
         for el in i:
             print(el, end=' ')
 
+class States:
+    states = []
+
+    def hasher(rows, hallway):
+        return tuple([tuple(row) for row in rows]), tuple(hallway)
+    
+    def add_state(self, rows, hallway):
+        hashed = self.hasher(rows, hallway)
+        if hashed in self.states:
+            return hashed
+        else:
+            self.states[hashed] = float("inf")
+
+    def update_state(self, rows, hallway, cost_to_goal):
+        hashed = self.hasher(rows, hallway)
+        self.states[hashed] = cost_to_goal
+
 dpr(rows, hallway)
 
-def check_row(rows, index):
-    if rows[0][index] == rows[1][index] and rows[1] != ' ':
-        return True
-    return False
+AMPHIPODS = ['A', 'B', 'C', 'D']
 
-def play(hallway, rows, in_frnt=False, frm_lft=False, pos=0):
-    hallway = hallway.copy()
-    rows = [row.copy() for row in rows]
-    if in_frnt:
+states = States()
 
-        #move across thw hallway
-        if frm_lft:
-            if pos < (len(hallway)-1) and hallway[pos+1] == ' ':
-                hallway[pos+1] = hallway[pos]
-                hallway[pos] = ' '
-                play(hallway, rows)
-                hallway[pos] = hallway[pos+1]
-                hallway[pos+1] = ' '
-        else:
-            if pos > 0 and hallway[pos-1] == ' ':
-                hallway[pos-1] = hallway[pos]
-                hallway[pos] = ' '
-                play(hallway, rows)
-                hallway[pos] = hallway[pos-1]
-                hallway[pos-1] = ' '
+row_to_hallway = lambda x: x*2
 
-        #move into the room
-        entrance_num = pos/2
-        cloned_rows = rows.copy()
-        if cloned_rows[0][entrance_num] == ' ':
-            cloned_rows[0][entrance_num] = hallway[pos]
-            if check_row(cloned_rows):
-                rows = cloned_rows
-                hallway[pos] = ' '
-                play()
+cost_for_amphi = lambda a: pow(10, AMPHIPODS.index(a))
 
-    # if any room has one in the upper but none in the lower
-    for i in range(4):
-        if rows[1][i] == ' ' and rows[0][i] != ' ':
-            rows[1][i] == 
+copy_row = lambda rows: [row.copy() for row in rows]
+    
 
-    for i in range(4):
-        if rows[0][i] == rows[1][i]:
-            continue
+def move(rows: list[list], hallway: list, cost_so_far: int):
+    state_res = states.add_state(rows, hallway)
+    if state_res is not None:
+        return state_res
+
+    costs = []
+
+    # move the amphipods in the hallway
+    for pos, amphipod in enumerate(hallway):
+        if amphipod != '#':
+            row_index = AMPHIPODS.index(amphipod)
+            target_pos = row_to_hallway(row_index)
+            path: list = []
+            if target_pos > pos:
+                path = hallway[pos+1:target_pos+1]
+            else:
+                path = hallway[target_pos:pos]
+            if all([x == '#' for x in path]):
+                if rows[1][row_index] == '#' and rows[0][row_index] == '#':
+                    rt = copy_row(rows)
+                    ht = hallway.copy()
+                    ht[pos] = '#'
+                    rt[1][row_index] = amphipod
+                    added_cost = cost_so_far + cost_for_amphi(len(path)+2)
+                    move(rt, ht, added_cost)
+                elif rows[1][row_index] == amphipod and rows[0][row_index] == '#':
+                    rt = copy_row(rows)
+                    ht = hallway.copy()
+                    ht[pos] = '#'
+                    rt[0][row_index] = amphipod
+                    added_cost = cost_so_far + cost_for_amphi(len(path)+1)
+                    move(rt, ht, added_cost)
+    
+    # move the amphipods in the top row
+    for pos, amp in enumerate(rows[0]):
+        if amp != '#' and (amp != AMPHIPODS[pos] or rows[1][pos] != AMPHIPODS[pos]):
+            hallway_equiv = row_to_hallway(pos)
+            
