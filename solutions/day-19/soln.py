@@ -33,7 +33,6 @@ transforms = [
 
 reverse_trans = [0,2,1,3,10,8,9,7,5,6,4,11,12,17,19,15,20,13,18,14,16,21,22,23]
 
-
 def subtract(a, b):
     """subtracts b from a in coordinate format"""
     return tuple([s_axis_val - b[s_axis_index] for s_axis_index, s_axis_val in enumerate(a)])
@@ -132,10 +131,19 @@ def reset_orientation(abs_orientations_functions, scanners):
     accepts: the absolute orientation functions, simple scanner data
     returns: [simple scanner data, complex scanner data] with the right orientations
     """
+    def find_final_reversal(tr_functions):
+        original_tup = (0,1,2)
+        mutated = original_tup
+        for fn in reversed(tr_functions):
+            mutated = transforms[fn](mutated)
+        for index, func in enumerate(transforms):
+            if func(original_tup) == mutated:
+                return index
+                
     orientation_reset_scanners = []
     for scanner_num, beacons in enumerate(scanners):
-        for fn in reversed(abs_orientations_functions[scanner_num]):
-            beacons = [transforms[fn](beacon) for beacon in beacons]
+        final_fn = find_final_reversal(abs_orientation_functions[scanner_num])
+        beacons = [transforms[final_fn](beacon) for beacon in beacons]
         relative_beacons = []
         for main_beacon in beacons[:len(beacons)-11]:
             relative_to_main = []
