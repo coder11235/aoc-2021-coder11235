@@ -31,6 +31,9 @@ transforms = [
   lambda a: (-a[1], -a[0], -a[2]),
 ]
 
+reverse_trans = [0,2,1,3,10,8,9,7,5,6,4,11,12,17,19,15,20,13,18,14,16,21,22,23]
+
+
 def subtract(a, b):
     """subtracts b from a in coordinate format"""
     return tuple([s_axis_val - b[s_axis_index] for s_axis_index, s_axis_val in enumerate(a)])
@@ -61,7 +64,7 @@ def parse(data):
             beacon_trans = [transforms[orientation_index](beacon) for beacon in beacon_orig_proc] 
 
             main_beacons_proc = []
-            for main_beacon in beacon_trans:
+            for main_beacon in beacon_trans[:len(beacon_trans)-11]:
                 relative_beacons = set([subtract(second_beacon, main_beacon) for second_beacon in beacon_trans])
                 main_beacons_proc.append(relative_beacons)
             orientations.append((orientation_index, main_beacons_proc))
@@ -69,7 +72,6 @@ def parse(data):
         scanners_beacon_to_beacon_rel.append(orientations)
 
     return scanners, scanners_beacon_to_beacon_rel
-
 
 def find_connections(scanners: list):
     """
@@ -88,13 +90,13 @@ def find_connections(scanners: list):
                         return orientation_index
 
     for main_index, main in enumerate(scanners):
-        print("main scanner: ", main_index)
-        for secondary_index, secondary in enumerate(scanners):
+        for secondary_index, secondary in enumerate(scanners[:main_index]):
             if main_index == secondary_index: continue
             # goal
             check_res = check_if_scanner_match(main, secondary)
             if check_res is not None:
                 relative_scanner_orientations[(main_index, secondary_index)] = check_res
+                relative_scanner_orientations[(secondary_index, main_index)] = reverse_trans[check_res]
 
     return relative_scanner_orientations
 
@@ -135,7 +137,7 @@ def reset_orientation(abs_orientations_functions, scanners):
         for fn in reversed(abs_orientations_functions[scanner_num]):
             beacons = [transforms[fn](beacon) for beacon in beacons]
         relative_beacons = []
-        for main_beacon in beacons:
+        for main_beacon in beacons[:len(beacons)-11]:
             relative_to_main = []
             for secondary_beacon in beacons:
                 relative_to_main.append(subtract(secondary_beacon, main_beacon))
@@ -204,23 +206,11 @@ def solve_2(scanner_pos):
                 highest = dist
     return highest
 
-print("parsing")
+
 mixed_o_simple_scanners, mixed_o_complex_scanners = parse(data)
-
-print("finding connections")
 connections = find_connections(mixed_o_complex_scanners)
-
-print("finding absolute orientation functions")
 abs_orientation_functions = find_abs_orientations(connections)
-
-print("resetting scanner orientations")
 resetted_scanners = reset_orientation(abs_orientation_functions, mixed_o_simple_scanners)
-
-print("finding scanner positions")
 scanner_abs_pos = find_scanner_pos(connections, resetted_scanners)
-
-print("solving soln1")
 print("solution 1 :", solve_1(scanner_abs_pos, resetted_scanners))
-
-print("solving soln2")
 print("solution 2 :", solve_2(scanner_abs_pos))
