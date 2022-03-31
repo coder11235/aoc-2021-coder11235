@@ -1,23 +1,10 @@
 import math
+import functools
 
-binmaps = {
-    '0' : '0000',
-    '1' : '0001',
-    '2' : '0010',
-    '3' : '0011',
-    '4' : '0100',
-    '5' : '0101',
-    '6' : '0110',
-    '7' : '0111',
-    '8' : '1000',
-    '9' : '1001',
-    'A' : '1010',
-    'B' : '1011',
-    'C' : '1100',
-    'D' : '1101',
-    'E' : '1110',
-    'F' : '1111',
-}
+@functools.cache
+def get_bin(val: str):
+    bn = bin(int(val, 16))[2:]
+    return "0"*(4-len(bn))+bn
 
 data = open('data.txt', 'r').read().strip()
 versions = []
@@ -26,7 +13,7 @@ packet = ''
 version_sum = 0
 
 for i in data:
-    packet += binmaps[i]
+    packet += get_bin(i)
 
 def clear_padding_zeroes(packet: str):
     # remove 0s at end
