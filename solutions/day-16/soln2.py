@@ -7,23 +7,13 @@ def get_bin(val: str):
     return "0"*(4-len(bn))+bn
 
 data = open('data.txt', 'r').read().strip()
-versions = []
 
 packet = "".join([get_bin(i) for i in data])
 
 def clear_padding_zeroes(packet: str):
     # remove 0s at end
-    packet = packet[::-1]
-    newpacket = ""
-    encountered = False
-    for i in packet:
-        if not encountered:
-            if i != '0':
-                encountered = True
-                newpacket += i
-        else:
-            newpacket += i
-    return newpacket[::-1]
+    last_0 = packet.rindex("0")
+    return packet[:last_0]
 
 packet = clear_padding_zeroes(packet)
 
@@ -69,7 +59,6 @@ def parse_literal(content: str):
                 # return the extra bits
                 return extra
         # return None because it used up everything
-        return None
     
     # res is the extra/ None value for the extra chars
     res = recurse_unpad(content)

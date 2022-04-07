@@ -1,4 +1,7 @@
 import functools
+import time
+
+st = time.perf_counter()
 
 @functools.cache
 def get_bin(val: str):
@@ -6,24 +9,14 @@ def get_bin(val: str):
     return "0"*(4-len(bn))+bn
 
 data = open('data.txt', 'r').read().strip()
-versions = []
 version_sum = 0
 
 packet = "".join([get_bin(i) for i in data])
 
 def clear_padding_zeroes(packet: str):
     # remove 0s at end
-    packet = packet[::-1]
-    newpacket = ""
-    encountered = False
-    for i in packet:
-        if not encountered:
-            if i != '0':
-                encountered = True
-                newpacket += i
-        else:
-            newpacket += i
-    return newpacket[::-1]
+    last_0 = packet.rindex("0")
+    return packet[:last_0]
 
 packet = clear_padding_zeroes(packet)
 
@@ -36,51 +29,23 @@ returns the part of the content that isnt part of the ltieral
 if it used all the content then it returns None
 """
 def parse_literal(content: str):
-    bits = ''
-
-    # recusrive function that accepts a literal and extra
+    # recusrive function that accepts a literal extra bits towards the end
     def recurse_unpad(cnt):
-        # trims the first bit
+        # gets the first bit
         first = cnt[0]
-        cnt = cnt[1:]
-        nonlocal bits
 
         # case to see if its not the last litieral value
         if first == '1':
-            bits += cnt[0:4]
-            rest = cnt[4:]
-            val = recurse_unpad(rest)
-            # return None back if it used up everything or else return the extra content
-            if val is not None:
-                return val
+            return recurse_unpad(cnt[5:])
         else:
-            # if it used up the entire literal
-            if len(cnt) == 4:
-                bits += cnt[0:4]
-            # if it did but it also has to take some more bits to get a multiple of 4
-            elif len(cnt) < 4:
-                rem = 4-len(cnt)
-                bits += cnt + '0'*rem
-            # if it didnt use up the entire literal and has some extra left
-            else:
-                bits += cnt[0:4]
-                extra = cnt[4:]
+            if len(cnt) > 5:
                 # return the extra bits
-                return extra
-        # return None because it used up everything
-        return None
+                return cnt[5:]
     
-    # res is the extra/ None value for the extra chars
-    res = recurse_unpad(content)
-    return res
+    # return extra bits after the literal or None if there are no bits after it
+    return recurse_unpad(content)
 
-"""
-accepts the content of the packet and all ahead of it and its length
 
-splits the data into the correct content and parses it
-
-returns the extra
-"""
 def parse_first_operator(content: str, length: int):
     disc = content[length:]
     content = content[:length]
@@ -121,3 +86,4 @@ def basic_parse(packet: str):
 
 basic_parse(packet)
 print(version_sum)
+print(time.perf_counter()-st)
