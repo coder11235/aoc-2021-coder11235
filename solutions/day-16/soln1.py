@@ -121,4 +121,3 @@ def basic_parse(packet: str):
 
 basic_parse(packet)
 print(version_sum)
-print(time.perf_counter()-st)
