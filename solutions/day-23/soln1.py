@@ -1,14 +1,11 @@
 import math
-from typing_extensions import Self
-
 
 inp = open('sample.txt').read()
 
 def parse(inp: str):
-    inp = inp.splitlines()[2:4]
     hallway = ['#']*11
     rows = []
-    for i in inp:
+    for i in inp.splitlines()[2:4]:  
         row = []
         for j in i:
             if j.isalpha():
@@ -29,7 +26,7 @@ def dpr(rows, hallway):
 class States:
     states = []
 
-    def hasher(rows, hallway):
+    def hasher(self, rows, hallway):
         return tuple([tuple(row) for row in rows]), tuple(hallway)
     
     def add_state(self, rows, hallway):
@@ -79,18 +76,28 @@ def move(rows: list[list], hallway: list, cost_so_far: int):
                     ht = hallway.copy()
                     ht[pos] = '#'
                     rt[1][row_index] = amphipod
-                    added_cost = cost_so_far + cost_for_amphi(len(path)+2)
-                    move(rt, ht, added_cost)
+                    added_cost = cost_for_amphi(amp)*(len(path)+2)
+                    costs.append(added_cost + move(rt, ht))
                 elif rows[1][row_index] == amphipod and rows[0][row_index] == '#':
                     rt = copy_row(rows)
                     ht = hallway.copy()
                     ht[pos] = '#'
                     rt[0][row_index] = amphipod
-                    added_cost = cost_so_far + cost_for_amphi(len(path)+1)
-                    move(rt, ht, added_cost)
+                    added_cost = cost_for_amphi(amp)*(len(path)+1)
+                    costs.append(added_cost + move(rt, ht))
     
     # move the amphipods in the top row
     for pos, amp in enumerate(rows[0]):
         if amp != '#' and (amp != AMPHIPODS[pos] or rows[1][pos] != AMPHIPODS[pos]):
             hallway_equiv = row_to_hallway(pos)
-            
+            def move_right():
+                cpos = hallway_equiv
+                while True:
+                    if cpos%2==0 or cpos == 10:
+                        length = cpos-pos
+                        rt = copy_row(rows)
+                        ht = hallway.copy()
+                        rt[pos] == '#'
+                        ht[cpos] == amp
+                        move_cost = 
+                    cpos += 1
