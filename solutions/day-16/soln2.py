@@ -8,12 +8,8 @@ def get_bin(val: str):
 
 data = open('data.txt', 'r').read().strip()
 versions = []
-packet = ''
 
-version_sum = 0
-
-for i in data:
-    packet += get_bin(i)
+packet = "".join([get_bin(i) for i in data])
 
 def clear_padding_zeroes(packet: str):
     # remove 0s at end
@@ -112,11 +108,8 @@ def parse_second_operator(content: str, length: int):
         return None, values
 
 def basic_parse(packet: str):
-    version = int(packet[:3], 2)
     type_id = int(packet[3:6], 2)
     packet = packet[6:]
-    global version_sum
-    version_sum += version
     if type_id == 4:
         return parse_literal(packet)
     else:

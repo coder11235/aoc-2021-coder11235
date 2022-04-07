@@ -7,12 +7,9 @@ def get_bin(val: str):
 
 data = open('data.txt', 'r').read().strip()
 versions = []
-packet = ''
-
 version_sum = 0
 
-for i in data:
-    packet += get_bin(i)
+packet = "".join([get_bin(i) for i in data])
 
 def clear_padding_zeroes(packet: str):
     # remove 0s at end
@@ -124,3 +121,4 @@ def basic_parse(packet: str):
 
 basic_parse(packet)
 print(version_sum)
+print(time.perf_counter()-st)
