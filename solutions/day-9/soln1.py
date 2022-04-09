@@ -9,9 +9,7 @@ def parse(line):
 heightmap = list(map(parse, heightmap))
 
 def issmallest(i, j):
-    #current height pos
     ch = heightmap[i][j]
-    #array storing adjacent points
     adj = []
     if i < len(heightmap) - 1:
         adj.append(heightmap[i+1][j])
