@@ -41,10 +41,6 @@ def add(a, b):
     """adds b to a in coordinate format"""
     return tuple([s_axis_val + b[s_axis_index] for s_axis_index, s_axis_val in enumerate(a)])
 
-# converts from list[list] to set(tuple) for comparision purposes
-setify = lambda list: set([tuple(x) for x in list])
-
-
 def parse(data):
     """
     accepts: raw input scanner data (data)
