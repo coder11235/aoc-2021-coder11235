@@ -62,7 +62,7 @@ def parse(data):
             for main_beacon in beacon_trans[:len(beacon_trans)-11]:
                 relative_beacons = set([subtract(second_beacon, main_beacon) for second_beacon in beacon_trans])
                 main_beacons_proc.append(relative_beacons)
-            orientations.append((orientation_index, main_beacons_proc))
+            orientations.append(main_beacons_proc)
 
         scanners_beacon_to_beacon_rel.append(orientations)
 
@@ -76,8 +76,8 @@ def find_connections(scanners: list):
     relative_scanner_orientations = {}
 
     def check_if_scanner_match(main, secondary):
-        _, main_beacons = main[0]
-        for orientation_index, second_beacons in secondary:
+        main_beacons = main[0]
+        for orientation_index, second_beacons in enumerate(secondary):
             for main_beacon in main_beacons:
                 for second_beacon in second_beacons:
                     common_relatives = main_beacon&second_beacon
