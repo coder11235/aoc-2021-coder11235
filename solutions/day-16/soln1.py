@@ -8,10 +8,10 @@ def get_bin(val: str):
     bn = bin(int(val, 16))[2:]
     return "0"*(4-len(bn))+bn
 
-data = open('data.txt', 'r').read().strip()
+data = open('data.txt', 'r')
 version_sum = 0
 
-packet = "".join([get_bin(i) for i in data])
+packet = "".join([get_bin(i) for i in data.read()])
 
 def clear_padding_zeroes(packet: str):
     # remove 0s at end
