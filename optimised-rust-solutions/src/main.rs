@@ -11,14 +11,13 @@ mod day7;
 mod day8;
 mod day9;
 mod day16;
-mod day19;
 
 use std::fs;
 
 fn main() {
-    let content = fs::read_to_string("inputs/day19.txt")
+    let content = fs::read_to_string("inputs/day9.txt")
         .expect("could not read file");
     let time = std::time::Instant::now();
-    let ans = day19::part1(&content);
-    println!("day soln: {} finished in: {:?}", ans, time.elapsed());
+    let ans = day9::part2(&content);
+    println!("day soln: {:?} finished in: {:?}", ans, time.elapsed());
 }
