@@ -197,19 +197,6 @@ def solve_1(scanner_pos, scanners):
 
     return len(all_beacons)
 
-def solve_2(scanner_pos):
-    """
-    accepts: positions of all scanners
-    returns: greatest manhattan distance
-    """
-    highest = 0
-    for i in scanner_pos.values():
-        for j in scanner_pos.values():
-            dist = sum([abs(a) for a in subtract(i, j)])
-            if dist > highest:
-                highest = dist
-    return highest
-
 
 mixed_o_simple_scanners, mixed_o_complex_scanners = parse(data)
 connections = find_connections(mixed_o_complex_scanners)
@@ -217,4 +204,3 @@ abs_orientation_functions = find_abs_orientations(connections)
 resetted_scanners = reset_orientation(abs_orientation_functions, mixed_o_simple_scanners)
 scanner_abs_pos = find_scanner_pos(connections, resetted_scanners)
 print("solution 1 :", solve_1(scanner_abs_pos, resetted_scanners))
-print("solution 2 :", solve_2(scanner_abs_pos))

@@ -1,0 +1,20 @@
+{
+    "incomplete": [
+        {
+            "day": 22,
+            "first": true
+        },
+        {
+            "day": 23,
+            "first": false
+        },
+        {
+            "day": 24,
+            "first": false
+        },
+        {
+            "day": 25,
+            "first": true
+        }
+    ]
+}
