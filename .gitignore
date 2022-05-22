@@ -1,8 +1,8 @@
-cookievals.py
-__pycache__/
-sel.py
-target/
-share/
-lib/
-bin/
-lib64/
+.DS_Store
+node_modules
+/build
+/.svelte-kit
+/package
+.env
+.env.*
+!.env.example
