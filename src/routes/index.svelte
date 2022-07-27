@@ -1,14 +1,18 @@
 <script context="module" type="ts">
 	const rsBmRrl = "https://raw.githubusercontent.com/coder11235/aoc-2021-coder11235/main/optimised-rust-solutions/benchmark.json";
 	// currently the rust solutions are in a "i finshed x day i will do the next one only attitude. no idea when that might change"
-	// const daysRustedUrl = "https://raw.githubusercontent.com/coder11235/aoc-2021-coder11235/main/optimised-rust-solutions/info.json";
-	export async function load({ fetch }) {
-		let perfsraw = await fetch(rsBmRrl);
+	const solnstatusurl = "https://raw.githubusercontent.com/coder11235/aoc-2021-coder11235/main/solutions/info.json"
+	export async function load({ fetch }: {fetch: ExternalFetch}) {
+		// shut up goddamn typescript
+		let perfsraw = await fetch(new Request(rsBmRrl));
 		let perfsjson = await perfsraw.json();
-		if(perfsraw.ok) {
+		let straw = await fetch(new Request(solnstatusurl))
+		let stjson = await straw.json();
+		if(perfsraw.ok && straw.ok) {
 			return {
 				props: {
-					rsperfsraw: perfsjson.map((perf: string[], day: number) => ({day: day+1,perf: perf}))
+					rsperfsraw: perfsjson.map((perf: string[], day: number) => ({day: day+1,perf: perf})),
+					solnst: stjson
 				}
 			}
 		}
@@ -19,10 +23,24 @@
 	}
 </script>
 
-<script type="ts">
-	export let rsperfsraw: object[];
+<script lang="ts">
+	export let rsperfsraw: {day: number, perf: string[]}[];
+	export let solnst: {incomplete: {day: number, first: boolean}[]};
+	let solutionstatuses = new Array(25).fill([true, true]).map((val, num) => ({day: num+1, stat: val}))
+	// console.log(solutionstatuses)
+	solnst.incomplete.forEach(function({day, first}){
+		if(first) {
+			solutionstatuses[day-1].stat = [true, false]
+		}
+		else {
+			solutionstatuses[day-1].stat = [false, false]
+		}
+	})
+	// console.log(solutionstatuses)
 	let rsperfsparts = [rsperfsraw.slice(0, 5), rsperfsraw.slice(5)]
 	import tree from '$lib/assets/tree.jpg'
+	import type { ExternalFetch } from '@sveltejs/kit';
+	import Solnlinkcard from '$lib/Solnlinkcard.svelte';
 </script>
 
 <main>
@@ -49,6 +67,16 @@
 					</tr>
 				{/each}
 			</table>
+			{/each}
+		</div>
+	</div>
+	<div class="section">
+		<div class="subheading">
+			<span>links for all my solutions</span>
+		</div>
+		<div class="solns">
+			{#each solutionstatuses as solnstat}
+				<Solnlinkcard daynum={solnstat.day} status={solnstat.stat}></Solnlinkcard>
 			{/each}
 		</div>
 	</div>
