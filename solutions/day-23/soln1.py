@@ -1,4 +1,6 @@
-raw = open("sample2.txt").read()
+import functools
+
+raw = open("sample.txt").read()
 
 def process_inp(raw_inp):
     raw_inp = raw_inp.splitlines()
@@ -40,6 +42,13 @@ def debug_print(rows, hallway):
         print('')
     print('')
 
+def hashify(rows, hallway):
+    if rows[0] is not tuple:
+        hashed_rows: tuple[tuple[str]] = tuple(tuple(row) for row in rows)
+    else:
+        hashed_rows = rows
+    return hashed_rows, tuple(hallway)
+
 def check_if_done(rows):
     for row in rows:
         for loc, amp in enumerate(row):
@@ -63,17 +72,20 @@ lowest_cost = float("inf")
 
 def duplicate_data(hallway, rows):
     # just clones rows and hallway
-    new_rows = [row.copy() for row in rows]
-    return hallway.copy(), new_rows
+    if rows is not list:
+        new_rows = [list(row) for row in rows]
+    else:
+        print(rows)
+        new_rows = [row.copy() for row in rows]
+    return hallway.copy() if hallway is list else list(hallway), new_rows
 
+@functools.cache
 def move_amp(rows, hallway, cost_so_far):
-    debug_print(rows, hallway)
-    # check if everthing is okay
-    global lowest_cost
+    # check if everything is okay
     if check_if_done(rows):
-        if cost_so_far < lowest_cost:
-            lowest_cost = cost_so_far
-        return
+        return cost_so_far
+
+    cost_to_finals = [float("inf")]
 
     #split rows to make life easier
     upper_row = rows[0]
@@ -103,7 +115,8 @@ def move_amp(rows, hallway, cost_so_far):
                 dup_rows[0][home_row_spot] = amp
                 extra_cost = (abs(home_hallway_spot-loc)+1)*AMPHIPODS_COST[amp]
             dup_hallway[loc] = '.'
-            move_amp(dup_rows, dup_hallway, cost_so_far+extra_cost)
+            hashed_rows, hashed_hall = hashify(dup_rows, dup_hallway)
+            cost_to_finals.append(move_amp(hashed_rows, hashed_hall, cost_so_far+extra_cost))
 
     # do the rows
 
@@ -134,7 +147,8 @@ def move_amp(rows, hallway, cost_so_far):
                 dup_hallway[cur_pos] = amp
                 dup_rows[0][loc] = '.'
                 extra_cost = (abs(opp_hallway_pos-cur_pos)+1)*AMPHIPODS_COST[amp]
-                move_amp(dup_rows, dup_hallway, cost_so_far+extra_cost)
+                hashed_rows, hashed_hall = hashify(dup_rows, dup_hallway)
+                cost_to_finals.append(move_amp(hashed_rows, hashed_hall, cost_so_far+extra_cost))
 
     # lower row movement
     for loc,amp in enumerate(lower_row):
@@ -162,8 +176,9 @@ def move_amp(rows, hallway, cost_so_far):
                 dup_hallway[cur_pos] = amp
                 dup_rows[1][loc] = '.'
                 extra_cost = (abs(opp_hallway_pos-cur_pos)+2)*AMPHIPODS_COST[amp]
-                move_amp(dup_rows, dup_hallway, cost_so_far+extra_cost)
-    print("done with func")
+                hashed_rows, hashed_hall = hashify(dup_rows, dup_hallway)
+                cost_to_finals.append(move_amp(hashed_rows, hashed_hall, cost_so_far+extra_cost))
+    return min(cost_to_finals)
 
-move_amp(rows, hallway, 0)
-print(lowest_cost)
+hashed_rows, hashed_hall = hashify(rows, hallway)
+print(move_amp(hashed_rows, hashed_hall, 0))
