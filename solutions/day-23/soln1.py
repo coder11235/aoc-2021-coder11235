@@ -1,6 +1,6 @@
 import functools
 
-raw = open("sample.txt").read()
+raw = open("data.txt").read()
 
 def process_inp(raw_inp):
     raw_inp = raw_inp.splitlines()
@@ -85,7 +85,7 @@ def move_amp(rows, hallway, cost_so_far):
     if check_if_done(rows):
         return cost_so_far
 
-    cost_to_finals = [float("inf")]
+    cost_to_finals = [(float("inf"))]
 
     #split rows to make life easier
     upper_row = rows[0]
@@ -164,7 +164,7 @@ def move_amp(rows, hallway, cost_so_far):
             if i == 0:
                 path_ranges = range(opp_hallway_pos, 11)
             else:
-                path_ranges = range(0, opp_hallway_pos)
+                path_ranges = reversed(range(0, opp_hallway_pos))
             for cur_pos in path_ranges:
                 # safety
                 if not check_if_available(cur_pos):
@@ -178,7 +178,11 @@ def move_amp(rows, hallway, cost_so_far):
                 extra_cost = (abs(opp_hallway_pos-cur_pos)+2)*AMPHIPODS_COST[amp]
                 hashed_rows, hashed_hall = hashify(dup_rows, dup_hallway)
                 cost_to_finals.append(move_amp(hashed_rows, hashed_hall, cost_so_far+extra_cost))
+
     return min(cost_to_finals)
 
 hashed_rows, hashed_hall = hashify(rows, hallway)
-print(move_amp(hashed_rows, hashed_hall, 0))
+
+cost = move_amp(hashed_rows, hashed_hall, 0) 
+
+print(cost)
