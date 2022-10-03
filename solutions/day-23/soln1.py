@@ -68,8 +68,6 @@ def check_path_empty(hallway, home_hallway_spot,loc):
             return False
     return True
 
-lowest_cost = float("inf")
-
 def duplicate_data(hallway, rows):
     # just clones rows and hallway
     if rows is not list:
