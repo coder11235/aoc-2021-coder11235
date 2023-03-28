@@ -11,17 +11,18 @@ mod day7;
 mod day8;
 mod day9;
 mod day10;
+mod day23;
 
 use std::fs;
 use std::time::{Instant, Duration};
 
 fn main() {
-    // let content = fs::read_to_string("inputs/day10.txt")
-    //     .expect("could not read file");
-    // let time = std::time::Instant::now();
-    // let ans = day10::part2(&content);
-    // println!("day soln: {:?} finished in: {:?}", ans, time.elapsed());
-    benchmark()
+    let content = fs::read_to_string("inputs/day23.txt")
+         .expect("could not read file");
+    let time = std::time::Instant::now();
+    let ans = day23::part2(&content);
+    println!("day soln: {:?} finished in: {:?}", ans, time.elapsed());
+    //benchmark()
 }
 
 macro_rules! day_solving_macro {
