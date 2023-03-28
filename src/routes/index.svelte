@@ -58,7 +58,7 @@
 		<div class="tablepar">
 			{#each rsperfsparts as rsperfs}
 			<table>
-				<tr><th class="tel">day</th><th class="tel">soln 1</th><th class="tel">soln 2</th></tr>
+				<tr><th class="tel">day</th><th class="tel">part 1</th><th class="tel">part 2</th></tr>
 				{#each rsperfs as perf}
 					<tr>
 						<td class="tel">day {perf.day}</td>
@@ -121,5 +121,10 @@
 	}
 	.section {
 		margin-top: 7%;
+	}
+	.solns {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
 	}
 </style>
