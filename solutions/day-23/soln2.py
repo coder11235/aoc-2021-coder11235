@@ -1,4 +1,12 @@
 raw = open('sample2.txt').read()
+import functools
+
+target_hallway = ('B','A','.','D','.','D','.','.','.','.','A')
+
+target_rows = (('.', '.', '.', '.'),
+('D', 'B', 'C', '.'),
+('D', 'B', 'C', 'C'),
+('A', 'B', 'C', 'A'))
 
 def parse(raw_data: str):
     rows = []
@@ -93,8 +101,40 @@ def check_path_empty(hallway, pos, target):
             return False
     return True
 
+# checks if the topmost amhipod needs to be moved in the column. returns row number if yes or None
+def check_column_requirement(rows, col_num):
+    topmost_amp_row = None
+    for row_num, row in enumerate(rows):
+        if row[col_num] != '.':
+            topmost_amp_row = row_num
+            break
+    if topmost_amp_row is None:
+        return
+    correct_amp = AMHIPODS_ORDER[col_num]
+    for row_num, row in reversed(list(enumerate(rows))):
+        if row[col_num] == '.':
+            return
+        elif row[col_num] != correct_amp:
+            return topmost_amp_row
 
+states = {"banana"}
+
+functools.cache
 def move_amp(rows, hallway, cost_so_far):
+    if (rows == target_rows) and (hallway == target_hallway):
+        pass
+    default_state = (
+            (),
+            (())
+    )
+    if (rows, hallway) in states:
+        return float("inf"), [default_state]
+    else:
+        states.add((rows, hallway))
+    if check_if_done(rows):
+        return cost_so_far, [(rows, hallway)]
+
+    finishing_costs = [(float('inf'), [default_state])]
     
     # move the amphipods into their rows from the hallway
     for pos, amp in enumerate(hallway):
@@ -111,28 +151,43 @@ def move_amp(rows, hallway, cost_so_far):
         dup_rows, dup_hall = duplicate_data(rows, hallway)
         dup_hall[pos] = '.'
         dup_rows[to_move_index][AMPHIPODS_HOME_ROW[amp]] = amp
-        move_amp(dup_rows, dup_hall, cost_so_far + extra_cost)
+        hashed_rows, hashed_hall = hashify(dup_rows, dup_hall)
+        finishing_costs.append(move_amp(hashed_rows, hashed_hall, cost_so_far + extra_cost))
 
     # drive the amphipods out of their wrong rows
     for col_num in range(4):
-        out_of_order = False
-        for row_num, row in reversed(list(enumerate(rows))):
-            if row[col_num] == AMHIPODS_ORDER[col_num]:
-                continue
-            if not out_of_order:
-                if row[col_num] == '.':
+        row_move_num = check_column_requirement(rows, col_num)
+        if row_move_num is None:
+            continue
+        opp_hallway_pos = row_to_hallway(col_num)
+        path_ranges = [range(opp_hallway_pos, 11), list(reversed(range(0, opp_hallway_pos)))]
+        for path in path_ranges:
+            for cur_pos in path:
+                if not check_if_available(cur_pos):
+                    continue
+                if hallway[cur_pos] != '.':
                     break
-            else:
-                # the logic for moving the amhipod
-                opp_hallway_pos = row_to_hallway(col_num)
-                path_ranges = map(
-                    lambda r: filter(check_if_available, r), 
-                    [range(opp_hallway_pos+1, 11), reversed(range(opp_hallway_pos))]
-                )
-                for pr in path_ranges:
-                    for cur_pos in pr:
-                        if hallway[cur_pos] != '.':
-                            break
-                        else:
+                moving_amp = rows[row_move_num][col_num] 
+                
+                # move the amhipod here
+                dup_rows, dup_hall = duplicate_data(rows, hallway)
+                dup_hall[cur_pos] = moving_amp
+                dup_rows[row_move_num][col_num] = '.'
+                extra_cost = (abs(opp_hallway_pos-cur_pos)+row_move_num+1)*AMPHIPODS_COST[moving_amp]
+                hashed_rows, hashed_hall = hashify(dup_rows, dup_hall)
+                finishing_costs.append(move_amp(hashed_rows, hashed_hall, cost_so_far+extra_cost))
 
-            out_of_order = True
+    min_cost_in_list = float("inf")
+    min_state = []
+    for cost, state in finishing_costs:
+        if cost <= min_cost_in_list:
+            min_cost_in_list = cost
+            min_state = state
+    min_state.append((rows, hallway))
+    return min_cost_in_list, min_state
+
+hashed_rows, hashed_hall = hashify(parsed_rows, parsed_hallway)
+cost, res_states = move_amp(hashed_rows, hashed_hall, 0)
+print(cost)
+for r, h in res_states:
+    debug_print(r, h)
